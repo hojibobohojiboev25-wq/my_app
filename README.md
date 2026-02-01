@@ -38,3 +38,35 @@ This project is compatible with Vercel. Push to GitHub and import the repo in Ve
 
 ## Environment
 - See `.env.example` for variables. No secrets are committed.
+
+## Continuous Integration (CI) ⚙️
+- A GitHub Actions workflow was prepared to run `npm ci` and `npm run build` on pushes to `main`.
+- Note: pushing workflow files can be rejected if your GitHub token lacks the `workflow` scope. If the workflow doesn't appear in this repo, add the workflow file manually at `.github/workflows/ci.yml` with the following contents:
+
+```yaml
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Run lint (optional)
+        run: npm run lint || true
+```
+
+- Vercel: This project is compatible with Vercel. Connect the GitHub repository to Vercel for automatic deployments on push.
