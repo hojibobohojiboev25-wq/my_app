@@ -1,12 +1,12 @@
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
+import { useTutorial } from '../components/useTutorial'
 
 // Dynamically import Tutorial to avoid SSR issues
 const Tutorial = dynamic(() => import('../components/Tutorial').then(mod => ({ default: mod.default })), {
   ssr: false,
   loading: () => null
 })
-import { useTutorial } from '../components/Tutorial'
 
 export default function Home() {
   const { shouldShowTutorial, completeTutorial } = useTutorial()
