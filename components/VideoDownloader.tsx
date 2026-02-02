@@ -82,43 +82,76 @@ export default function VideoDownloader({ videoUrl, videoName = 'edited-video' }
     setDownloadProgress(0)
     setDownloadComplete(false)
 
-    // Simulate download progress
-    const progressInterval = setInterval(() => {
-      setDownloadProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(progressInterval)
+    try {
+      // Simulate processing time based on format
+      const processingTime = formatId === 'mobile-hd' ? 1500 :
+                           formatId === 'desktop-4k' ? 3000 :
+                           formatId === 'tablet-fullhd' ? 2000 :
+                           formatId === 'web-optimized' ? 1000 : 2500
+
+      // Mock download progress
+      const progressInterval = setInterval(() => {
+        setDownloadProgress(prev => {
+          if (prev >= 100) {
+            clearInterval(progressInterval)
+            return 100
+          }
+          return prev + Math.random() * 12
+        })
+      }, 150)
+
+      // Process and download
+      setTimeout(async () => {
+        try {
+          // For demo purposes, we'll download the original video
+          // In a real app, this would process the video according to the selected format
+          const response = await fetch(videoUrl)
+          const blob = await response.blob()
+
+          // Create download link
+          const url = URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = url
+          link.download = `${videoName}-${formatId}.mp4`
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          URL.revokeObjectURL(url)
+
+          // Complete download
           setIsDownloading(false)
           setDownloadComplete(true)
-          return 100
-        }
-        return prev + Math.random() * 20
-      })
-    }, 300)
 
-    // Mock download delay
-    setTimeout(() => {
-      try {
-        // Create download link
-        const link = document.createElement('a')
-        link.href = videoUrl
-        link.download = `${videoName}-${formatId}.mp4`
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
+          // Add to export history
+          const newExport = {
+            id: Date.now().toString(),
+            preset: DOWNLOAD_OPTIONS.find(opt => opt.id === formatId)?.name || 'Custom',
+            timestamp: new Date().toLocaleString(),
+            size: DOWNLOAD_OPTIONS.find(opt => opt.id === formatId)?.size || '~10MB',
+            status: 'completed' as const
+          }
+          setExportHistory(prev => [newExport, ...prev.slice(0, 4)])
 
-        // Clear progress after successful download
-        setTimeout(() => {
-          setDownloadComplete(false)
+          // Reset after 3 seconds
+          setTimeout(() => {
+            setDownloadComplete(false)
+            setDownloadProgress(0)
+          }, 3000)
+
+        } catch (error) {
+          console.error('Download failed:', error)
+          alert('Download failed. Please check your internet connection and try again.')
+          setIsDownloading(false)
           setDownloadProgress(0)
-        }, 2000)
-      } catch (error) {
-        console.error('Download failed:', error)
-        alert('Download failed. Please try again.')
-        setIsDownloading(false)
-        setDownloadProgress(0)
-        clearInterval(progressInterval)
-      }
-    }, 2000)
+          clearInterval(progressInterval)
+        }
+      }, processingTime)
+
+    } catch (error) {
+      console.error('Processing failed:', error)
+      setIsDownloading(false)
+      setDownloadProgress(0)
+    }
   }
 
   const selectedOption = DOWNLOAD_OPTIONS.find(opt => opt.id === selectedFormat)

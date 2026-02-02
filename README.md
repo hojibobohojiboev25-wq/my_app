@@ -1,6 +1,6 @@
-# 🎬 VideoForge Pro - Professional Mobile Video Editor
+# 🎨 Vieditor - Ultimate Mobile Media Editor
 
-A cutting-edge, production-ready Progressive Web App that delivers a comprehensive mobile video editing experience with advanced tools, stunning templates, cloud synchronization, and professional-grade features.
+The most advanced mobile media editing platform that combines professional video editing, photo manipulation, music integration, and creative tools in one powerful app. Edit videos, enhance photos, mix audio, and create stunning content on your mobile device.
 
 ## ✨ Tech Stack
 

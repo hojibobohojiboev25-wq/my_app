@@ -5,7 +5,8 @@ import SaveProject from '../../components/SaveProject'
 import AudioEditor from '../../components/AudioEditor'
 import ExportOptions from '../../components/ExportOptions'
 import VideoDownloader from '../../components/VideoDownloader'
-import { RotateCw, Type, Music, Scissors, Zap, Filter, Download } from 'lucide-react'
+import PhotoEditor from '../../components/PhotoEditor'
+import { RotateCw, Type, Music, Scissors, Zap, Filter, Download, Image, Video, Sparkles } from 'lucide-react'
 
 export default function CreatePage() {
   const [file, setFile] = useState<File | null>(null)
@@ -30,10 +31,12 @@ export default function CreatePage() {
   const [activeFilter, setActiveFilter] = useState<'basic' | 'color' | 'effects' | 'advanced'>('basic')
   const [textOverlay, setTextOverlay] = useState('')
   const [textPosition, setTextPosition] = useState<'top' | 'center' | 'bottom'>('bottom')
+  const [contentType, setContentType] = useState<'video' | 'photo'>('video')
   const [activeTool, setActiveTool] = useState<'trim' | 'filter' | 'text' | 'audio'>('trim')
   const [showAudioEditor, setShowAudioEditor] = useState(false)
   const [showExportOptions, setShowExportOptions] = useState(false)
   const [showVideoDownloader, setShowVideoDownloader] = useState(false)
+  const [showPhotoEditor, setShowPhotoEditor] = useState(false)
 
   function onFile(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0] ?? null
@@ -86,15 +89,186 @@ export default function CreatePage() {
 
   return (
     <main className="px-4 pt-6 pb-24">
-      <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Create</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Create Project</h1>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-gray-500 dark:text-gray-400">Professional Editor</span>
+          <Sparkles className="w-5 h-5 text-yellow-500" />
+        </div>
+      </div>
 
-      <section className="mt-4">
-        <label className="block text-sm text-gray-600 dark:text-gray-400">Upload a video</label>
-        <input className="mt-2 bg-white dark:bg-gray-800 border dark:border-gray-600 rounded px-3 py-2 text-gray-900 dark:text-gray-100" type="file" accept="video/*" onChange={onFile} />
-      </section>
+      {/* Content Type Selector */}
+      <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl p-4 mb-6">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Choose Content Type</h2>
+        <div className="grid grid-cols-2 gap-4">
+          <button
+            onClick={() => setContentType('video')}
+            className={`p-4 rounded-xl border-2 transition-all duration-200 ${
+              contentType === 'video'
+                ? 'border-blue-500 bg-blue-500 text-white shadow-lg'
+                : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:border-blue-300'
+            }`}
+          >
+            <Video className="w-8 h-8 mx-auto mb-2" />
+            <div className="font-semibold">Video Editor</div>
+            <div className="text-xs opacity-80">Edit videos with advanced tools</div>
+          </button>
 
-      {file && (
-        <section className="mt-4 space-y-3">
+          <button
+            onClick={() => setContentType('photo')}
+            className={`p-4 rounded-xl border-2 transition-all duration-200 ${
+              contentType === 'photo'
+                ? 'border-purple-500 bg-purple-500 text-white shadow-lg'
+                : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:border-purple-300'
+            }`}
+          >
+            <Image className="w-8 h-8 mx-auto mb-2" />
+            <div className="font-semibold">Photo Editor</div>
+            <div className="text-xs opacity-80">Enhance photos with filters</div>
+          </button>
+        </div>
+      </div>
+
+      {contentType === 'video' ? (
+        <section className="space-y-6">
+          {/* Video Upload Section */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border dark:border-gray-700">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
+                <Video className="w-6 h-6 text-blue-600" />
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Upload Video</h2>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Select a video file to start editing</p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-8 text-center hover:border-blue-400 transition-colors">
+                <Video className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-600 dark:text-gray-400 mb-4">Drag & drop a video file or click to browse</p>
+                <label className="inline-block">
+                  <input
+                    type="file"
+                    accept="video/*"
+                    onChange={onFile}
+                    className="hidden"
+                  />
+                  <span className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg cursor-pointer transition-colors inline-flex items-center gap-2">
+                    <Video className="w-4 h-4" />
+                    Choose Video
+                  </span>
+                </label>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                  Supports MP4, MOV, AVI, WebM up to 500MB
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      ) : (
+        <section className="space-y-6">
+          {/* Photo Upload Section */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border dark:border-gray-700">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 bg-purple-100 dark:bg-purple-900/20 rounded-lg">
+                <Image className="w-6 h-6 text-purple-600" />
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Upload Photo</h2>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Select a photo to start editing</p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-8 text-center hover:border-purple-400 transition-colors">
+                <Image className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-600 dark:text-gray-400 mb-4">Drag & drop a photo or click to browse</p>
+                <button
+                  onClick={() => setShowPhotoEditor(true)}
+                  className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg cursor-pointer transition-colors inline-flex items-center gap-2"
+                >
+                  <Image className="w-4 h-4" />
+                  Open Photo Editor
+                </button>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                  Supports JPG, PNG, WebP up to 50MB
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {file && contentType === 'video' && (
+        <section className="space-y-6">
+          {/* Video Preview */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border dark:border-gray-700">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Video Preview</h3>
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                {duration ? `${duration.toFixed(1)}s` : 'Loading...'}
+              </div>
+            </div>
+
+            <div className="relative bg-black rounded-lg overflow-hidden shadow-2xl">
+              <video
+                ref={videoRef}
+                src={URL.createObjectURL(file)}
+                controls
+                onLoadedMetadata={() => {
+                  onLoadedMetadata()
+                  applyVideoFilters()
+                }}
+                className="w-full max-h-64 object-contain"
+                style={{
+                  filter: `
+                    brightness(${brightness}%)
+                    contrast(${contrast}%)
+                    saturate(${saturation}%)
+                    hue-rotate(${hue}deg)
+                    blur(${blur}px)
+                    sepia(${sepia}%)
+                    grayscale(${grayscale}%)
+                    invert(${invert}%)
+                    opacity(${opacity}%)
+                  `,
+                  transform: `rotate(${rotation}deg)`,
+                }}
+              />
+              {textOverlay && (
+                <div className={`absolute inset-0 flex ${textPosition === 'top' ? 'items-start' : textPosition === 'center' ? 'items-center' : 'items-end'} justify-center pointer-events-none p-4`}>
+                  <div className="bg-black bg-opacity-50 text-white px-3 py-1 rounded-lg text-lg font-semibold">
+                    {textOverlay}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Professional Editing Tools */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border dark:border-gray-700">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Editing Tools</h3>
+
+            {/* Tool Selection */}
+            <div className="grid grid-cols-4 gap-3 mb-6">
+              <button onClick={() => setActiveTool('trim')} className={`flex flex-col items-center p-3 rounded-lg transition-all ${activeTool === 'trim' ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'}`}>
+                <Scissors className="w-6 h-6 mb-1" />
+                <span className="text-xs font-medium">Trim</span>
+              </button>
+              <button onClick={() => setActiveTool('filter')} className={`flex flex-col items-center p-3 rounded-lg transition-all ${activeTool === 'filter' ? 'bg-purple-100 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'}`}>
+                <Filter className="w-6 h-6 mb-1" />
+                <span className="text-xs font-medium">Filters</span>
+              </button>
+              <button onClick={() => setActiveTool('text')} className={`flex flex-col items-center p-3 rounded-lg transition-all ${activeTool === 'text' ? 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-300' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'}`}>
+                <Type className="w-6 h-6 mb-1" />
+                <span className="text-xs font-medium">Text</span>
+              </button>
+              <button onClick={() => setActiveTool('audio')} className={`flex flex-col items-center p-3 rounded-lg transition-all ${activeTool === 'audio' ? 'bg-orange-100 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'}`}>
+                <Music className="w-6 h-6 mb-1" />
+                <span className="text-xs font-medium">Audio</span>
+              </button>
+            </div>
           <div className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden relative border dark:border-gray-700">
             <video
               ref={videoRef}
@@ -612,6 +786,10 @@ export default function CreatePage() {
             ✕
           </button>
         </div>
+      )}
+
+      {showPhotoEditor && (
+        <PhotoEditor onClose={() => setShowPhotoEditor(false)} />
       )}
 
     </main>

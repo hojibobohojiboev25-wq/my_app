@@ -34,10 +34,12 @@ export default function AudioEditor({ onClose }: { onClose?: () => void }) {
   const [tracks, setTracks] = useState<AudioTrack[]>([])
   const [isRecording, setIsRecording] = useState(false)
   const [recordingTime, setRecordingTime] = useState(0)
-  const [activeTab, setActiveTab] = useState<'record' | 'library' | 'effects'>('record')
+  const [activeTab, setActiveTab] = useState<'record' | 'library' | 'device' | 'effects'>('record')
   const [selectedMusic, setSelectedMusic] = useState<string | null>(null)
+  const [deviceAudio, setDeviceAudio] = useState<File | null>(null)
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const recordingIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     return () => {
@@ -120,6 +122,30 @@ export default function AudioEditor({ onClose }: { onClose?: () => void }) {
     ))
   }
 
+  const handleDeviceAudioUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file && file.type.startsWith('audio/')) {
+      setDeviceAudio(file)
+      const newTrack: AudioTrack = {
+        id: Date.now().toString(),
+        name: file.name,
+        type: 'music',
+        duration: 0, // We'll get this from audio element
+        volume: 70,
+        startTime: 0,
+        file,
+        url: URL.createObjectURL(file)
+      }
+      setTracks(prev => [...prev, newTrack])
+    }
+  }
+
+  const addDeviceAudio = () => {
+    if (deviceAudio) {
+      fileInputRef.current?.click()
+    }
+  }
+
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60)
     const secs = seconds % 60
@@ -139,11 +165,13 @@ export default function AudioEditor({ onClose }: { onClose?: () => void }) {
 
         <div className="p-4">
           {/* Tabs */}
-          <div className="flex mb-4 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+          <div className="grid grid-cols-2 gap-1 mb-4">
             <button
               onClick={() => setActiveTab('record')}
-              className={`flex-1 flex items-center justify-center gap-1 py-2 px-3 rounded-md text-sm ${
-                activeTab === 'record' ? 'bg-white dark:bg-gray-600 shadow-sm' : 'text-gray-600 dark:text-gray-400'
+              className={`flex items-center justify-center gap-1 py-3 px-4 rounded-lg text-sm font-medium transition-all ${
+                activeTab === 'record'
+                  ? 'bg-blue-600 text-white shadow-lg'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
               }`}
             >
               <Mic className="w-4 h-4" />
@@ -151,17 +179,31 @@ export default function AudioEditor({ onClose }: { onClose?: () => void }) {
             </button>
             <button
               onClick={() => setActiveTab('library')}
-              className={`flex-1 flex items-center justify-center gap-1 py-2 px-3 rounded-md text-sm ${
-                activeTab === 'library' ? 'bg-white dark:bg-gray-600 shadow-sm' : 'text-gray-600 dark:text-gray-400'
+              className={`flex items-center justify-center gap-1 py-3 px-4 rounded-lg text-sm font-medium transition-all ${
+                activeTab === 'library'
+                  ? 'bg-green-600 text-white shadow-lg'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
               }`}
             >
               <Music className="w-4 h-4" />
-              Music
+              Library
+            </button>
+            <button
+              onClick={() => setActiveTab('device')}
+              className={`flex items-center justify-center gap-1 py-3 px-4 rounded-lg text-sm font-medium transition-all ${
+                activeTab === 'device'
+                  ? 'bg-purple-600 text-white shadow-lg'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+              }`}
+            >
+              📱 Device
             </button>
             <button
               onClick={() => setActiveTab('effects')}
-              className={`flex-1 flex items-center justify-center gap-1 py-2 px-3 rounded-md text-sm ${
-                activeTab === 'effects' ? 'bg-white dark:bg-gray-600 shadow-sm' : 'text-gray-600 dark:text-gray-400'
+              className={`flex items-center justify-center gap-1 py-3 px-4 rounded-lg text-sm font-medium transition-all ${
+                activeTab === 'effects'
+                  ? 'bg-orange-600 text-white shadow-lg'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
               }`}
             >
               <Volume2 className="w-4 h-4" />
@@ -257,6 +299,43 @@ export default function AudioEditor({ onClose }: { onClose?: () => void }) {
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+
+          {activeTab === 'device' && (
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-medium mb-3">Upload from Device</h4>
+                <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center">
+                  <Music className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-600 dark:text-gray-400 mb-4">
+                    Upload audio files from your device (MP3, WAV, M4A)
+                  </p>
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors"
+                  >
+                    Choose Audio File
+                  </button>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="audio/*"
+                    onChange={handleDeviceAudioUpload}
+                    className="hidden"
+                  />
+                </div>
+              </div>
+
+              <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+                <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">Supported Formats</h4>
+                <div className="text-sm text-blue-800 dark:text-blue-200">
+                  <p>• MP3 - Most common audio format</p>
+                  <p>• WAV - High quality, uncompressed</p>
+                  <p>• M4A - Apple audio format</p>
+                  <p>• AAC - Advanced audio coding</p>
+                </div>
+              </div>
             </div>
           )}
 

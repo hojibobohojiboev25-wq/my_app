@@ -4,8 +4,8 @@ export default function Home() {
   return (
     <main className="px-4 pt-6">
       <header className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">VideoForge Pro</h1>
-        <div className="text-sm text-gray-500 dark:text-gray-400">Professional Mobile Video Editor • PWA</div>
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">Vieditor</h1>
+        <div className="text-sm text-gray-500 dark:text-gray-400">Ultimate Mobile Media Editor</div>
       </header>
 
       <section className="mt-6">

@@ -1,8 +1,8 @@
 {
-  "name": "videoforge-pro",
-  "version": "1.0.0",
+  "name": "vieditor",
+  "version": "2.0.0",
   "private": true,
-  "description": "Professional mobile video editing studio with advanced tools, templates, and cloud sync",
+  "description": "Ultimate mobile media editor - videos, photos, music with professional tools",
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "next build",
