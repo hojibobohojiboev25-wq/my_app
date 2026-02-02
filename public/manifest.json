@@ -1,12 +1,50 @@
 {
-  "name": "Mobile Video Editor",
-  "short_name": "MVE",
+  "name": "VideoForge Pro - Professional Video Editor",
+  "short_name": "VideoForge",
+  "description": "Advanced mobile video editing studio with professional tools, templates, and cloud sync",
   "start_url": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#ffffff",
-  "theme_color": "#0ea5e9",
+  "theme_color": "#6366f1",
+  "categories": ["productivity", "utilities", "photo", "video"],
+  "lang": "en",
+  "dir": "ltr",
   "icons": [
-    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "New Project",
+      "short_name": "Create",
+      "description": "Start a new video editing project",
+      "url": "/create",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Templates",
+      "short_name": "Templates",
+      "description": "Browse video templates",
+      "url": "/templates",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "My Projects",
+      "short_name": "Projects",
+      "description": "View your saved projects",
+      "url": "/projects",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    }
   ]
 }

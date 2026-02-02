@@ -4,7 +4,8 @@ import { useState, useRef } from 'react'
 import SaveProject from '../../components/SaveProject'
 import AudioEditor from '../../components/AudioEditor'
 import ExportOptions from '../../components/ExportOptions'
-import { RotateCw, Type, Music, Scissors, Zap, Filter } from 'lucide-react'
+import VideoDownloader from '../../components/VideoDownloader'
+import { RotateCw, Type, Music, Scissors, Zap, Filter, Download } from 'lucide-react'
 
 export default function CreatePage() {
   const [file, setFile] = useState<File | null>(null)
@@ -32,6 +33,7 @@ export default function CreatePage() {
   const [activeTool, setActiveTool] = useState<'trim' | 'filter' | 'text' | 'audio'>('trim')
   const [showAudioEditor, setShowAudioEditor] = useState(false)
   const [showExportOptions, setShowExportOptions] = useState(false)
+  const [showVideoDownloader, setShowVideoDownloader] = useState(false)
 
   function onFile(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0] ?? null
@@ -545,6 +547,14 @@ export default function CreatePage() {
               <button disabled={loading} onClick={() => setShowExportOptions(true)} className="flex-1 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors">
                 {loading ? 'Exporting...' : 'Export Video'}
               </button>
+              <button
+                onClick={() => setShowVideoDownloader(true)}
+                disabled={!file}
+                className="px-3 py-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center gap-1"
+              >
+                <Download className="w-4 h-4" />
+                Download
+              </button>
               <button onClick={() => {
                 setBrightness(100)
                 setContrast(100)
@@ -587,6 +597,21 @@ export default function CreatePage() {
             alert(`Exporting with preset: ${preset.name}\nFormat: ${preset.format}\nQuality: ${preset.quality}\nResolution: ${preset.resolution}`)
           }}
         />
+      )}
+
+      {showVideoDownloader && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <VideoDownloader
+            videoUrl={file ? URL.createObjectURL(file) : undefined}
+            videoName={file?.name?.replace(/\.[^/.]+$/, "") || 'edited-video'}
+          />
+          <button
+            onClick={() => setShowVideoDownloader(false)}
+            className="absolute top-4 right-4 text-white hover:text-gray-300 text-2xl"
+          >
+            ✕
+          </button>
+        </div>
       )}
 
     </main>

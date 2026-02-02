@@ -1,7 +1,8 @@
 {
-  "name": "mobile-video-editor",
-  "version": "0.1.0",
+  "name": "videoforge-pro",
+  "version": "1.0.0",
   "private": true,
+  "description": "Professional mobile video editing studio with advanced tools, templates, and cloud sync",
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "next build",

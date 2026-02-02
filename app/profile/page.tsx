@@ -3,13 +3,15 @@
 import { useState } from 'react'
 import { useAuth } from '../../components/AuthProvider'
 import Analytics from '../../components/Analytics'
-import { BarChart3 } from 'lucide-react'
+import Achievements from '../../components/Achievements'
+import { BarChart3, Trophy } from 'lucide-react'
 
 export default function Profile(){
   const { user, login, logout } = useAuth()
   const [email, setEmail] = useState('')
   const [role, setRole] = useState<'user'|'admin'>('user')
   const [showAnalytics, setShowAnalytics] = useState(false)
+  const [showAchievements, setShowAchievements] = useState(false)
 
   function onLogin(e: React.FormEvent){
     e.preventDefault()
@@ -41,20 +43,61 @@ export default function Profile(){
         <div className="mt-4 bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border dark:border-gray-700">
           <div className="font-medium text-gray-900 dark:text-gray-100">{user.email}</div>
           <div className="text-sm text-gray-500 dark:text-gray-400">Role: {user.role}</div>
-          <div className="mt-4 grid grid-cols-2 gap-2">
+          <div className="mt-6 grid grid-cols-2 gap-3">
             <button
               onClick={() => setShowAnalytics(true)}
-              className="flex items-center justify-center gap-2 py-3 px-4 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-800/30 transition-colors"
+              className="flex items-center justify-center gap-2 py-4 px-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all duration-200 transform hover:scale-105 shadow-lg"
             >
-              <BarChart3 className="w-4 h-4" />
-              Analytics
+              <BarChart3 className="w-5 h-5" />
+              <span className="font-medium">Analytics</span>
+            </button>
+            <button
+              onClick={() => setShowAchievements(true)}
+              className="flex items-center justify-center gap-2 py-4 px-4 bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-xl hover:from-yellow-600 hover:to-orange-600 transition-all duration-200 transform hover:scale-105 shadow-lg"
+            >
+              <Trophy className="w-5 h-5" />
+              <span className="font-medium">Achievements</span>
+            </button>
+            <button
+              onClick={() => {/* Show tutorial */}}
+              className="flex items-center justify-center gap-2 py-4 px-4 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-xl hover:from-purple-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 shadow-lg"
+            >
+              <span className="text-lg">📚</span>
+              <span className="font-medium">Tutorial</span>
+            </button>
+            <button
+              onClick={() => {/* Share app */}}
+              className="flex items-center justify-center gap-2 py-4 px-4 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 transition-all duration-200 transform hover:scale-105 shadow-lg"
+            >
+              <span className="text-lg">📤</span>
+              <span className="font-medium">Share App</span>
             </button>
             <button
               onClick={() => logout()}
-              className="py-3 px-4 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 rounded-lg hover:bg-red-100 dark:hover:bg-red-800/30 transition-colors"
+              className="col-span-2 flex items-center justify-center gap-2 py-4 px-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:from-red-600 hover:to-red-700 transition-all duration-200 transform hover:scale-105 shadow-lg"
             >
-              Sign out
+              <span className="text-lg">🚪</span>
+              <span className="font-medium">Sign Out</span>
             </button>
+          </div>
+
+          {/* Usage Stats */}
+          <div className="mt-6 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-xl p-4">
+            <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">Your Stats</h4>
+            <div className="grid grid-cols-3 gap-4 text-center">
+              <div>
+                <div className="text-2xl font-bold text-indigo-600">24</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">Projects</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-purple-600">156</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">Edits</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-pink-600">42h</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">Time Saved</div>
+              </div>
+            </div>
           </div>
           {user.role === 'admin' && (
             <div className="mt-3">
@@ -68,6 +111,10 @@ export default function Profile(){
 
       {showAnalytics && (
         <Analytics onClose={() => setShowAnalytics(false)} />
+      )}
+
+      {showAchievements && (
+        <Achievements onClose={() => setShowAchievements(false)} />
       )}
 
     </main>
