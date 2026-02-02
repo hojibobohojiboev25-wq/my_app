@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { X, ChevronRight, ChevronLeft, Play, CheckCircle, Lightbulb, BookOpen } from 'lucide-react'
+// import { X, ChevronRight, ChevronLeft, Play, CheckCircle, Lightbulb, BookOpen } from 'lucide-react'
 
 interface TutorialStep {
   id: string
@@ -149,7 +149,7 @@ export default function Tutorial({ onComplete, onClose }: {
           {/* Header */}
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <BookOpen className="w-5 h-5 text-blue-600" />
+              <span className="text-blue-600 text-xl">📚</span>
               <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
                 Step {currentStep + 1} of {TUTORIAL_STEPS.length}
               </span>
@@ -161,7 +161,7 @@ export default function Tutorial({ onComplete, onClose }: {
               }}
               className="text-gray-400 hover:text-gray-600"
             >
-              <X className="w-5 h-5" />
+              <span className="text-xl">✕</span>
             </button>
           </div>
 
@@ -239,7 +239,7 @@ export default function Tutorial({ onComplete, onClose }: {
 
             {step.id === 'complete' && (
               <div className="bg-gradient-to-br from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-lg p-6 text-center">
-                <CheckCircle className="w-12 h-12 text-green-600 mx-auto mb-3" />
+                <span className="text-green-600 text-4xl block mx-auto mb-3">✓</span>
                 <div className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
                   Tutorial Complete!
                 </div>
@@ -257,7 +257,7 @@ export default function Tutorial({ onComplete, onClose }: {
               disabled={currentStep === 0}
               className="flex items-center gap-2 px-4 py-2 text-gray-600 dark:text-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <ChevronLeft className="w-4 h-4" />
+              <span className="text-lg">⬅️</span>
               Previous
             </button>
 
@@ -275,7 +275,7 @@ export default function Tutorial({ onComplete, onClose }: {
                   className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
                 >
                   {currentStep === TUTORIAL_STEPS.length - 1 ? 'Finish' : 'Next'}
-                  <ChevronRight className="w-4 h-4 inline ml-1" />
+                  <span className="text-lg inline ml-1">➡️</span>
                 </button>
               )}
             </div>
@@ -303,17 +303,31 @@ export function useTutorial() {
   const [shouldShowTutorial, setShouldShowTutorial] = useState(false)
 
   useEffect(() => {
-    const tutorialCompleted = localStorage.getItem('tutorial_completed')
-    const isNewUser = !localStorage.getItem('has_used_app')
+    // Only access localStorage on client side
+    if (typeof window !== 'undefined') {
+      try {
+        const tutorialCompleted = localStorage.getItem('tutorial_completed')
+        const isNewUser = !localStorage.getItem('has_used_app')
 
-    if (!tutorialCompleted && isNewUser) {
-      setShouldShowTutorial(true)
+        if (!tutorialCompleted && isNewUser) {
+          setShouldShowTutorial(true)
+        }
+      } catch (error) {
+        // localStorage not available, show tutorial
+        setShouldShowTutorial(true)
+      }
     }
   }, [])
 
   const completeTutorial = () => {
-    localStorage.setItem('tutorial_completed', 'true')
-    localStorage.setItem('has_used_app', 'true')
+    try {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('tutorial_completed', 'true')
+        localStorage.setItem('has_used_app', 'true')
+      }
+    } catch (error) {
+      // localStorage not available, just close tutorial
+    }
     setShouldShowTutorial(false)
   }
 
