@@ -2,6 +2,7 @@ import './globals.css'
 import { ReactNode } from 'react'
 
 import { AuthProvider } from '../components/AuthProvider'
+import { ThemeProvider } from '../components/ThemeProvider'
 import dynamic from 'next/dynamic'
 const BottomNav = dynamic(() => import('../components/BottomNav'), { ssr: false })
 
@@ -19,12 +20,14 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <meta name="theme-color" content="#ffffff" />
       </head>
       <body>
-        <AuthProvider>
-          <div className="app-shell max-w-md mx-auto w-full min-h-screen flex flex-col">
-            <main className="flex-1">{children}</main>
-            <BottomNav />
-          </div>
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <div className="app-shell max-w-md mx-auto w-full min-h-screen flex flex-col bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+              <main className="flex-1">{children}</main>
+              <BottomNav />
+            </div>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   )

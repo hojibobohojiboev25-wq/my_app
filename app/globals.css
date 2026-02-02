@@ -12,7 +12,7 @@ html, body, #__next {
 }
 
 body {
-  @apply bg-gray-50 text-gray-900 antialiased;
+  @apply bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 antialiased transition-colors duration-200;
   padding-top: var(--safe-top);
   padding-bottom: calc(var(--safe-bottom) + 56px); /* leave room for bottom nav */
 }
@@ -21,4 +21,44 @@ body {
   min-height: 100vh;
   display:flex;
   flex-direction:column;
+}
+
+/* Dark mode styles */
+.dark {
+  color-scheme: dark;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Smooth transitions for theme changes */
+* {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Improved focus styles */
+.focus-ring:focus {
+  @apply outline-none ring-2 ring-blue-500 ring-opacity-50;
+}
+
+/* Better button hover effects */
+.btn-hover {
+  @apply transition-all duration-200 hover:scale-105 active:scale-95;
 }
