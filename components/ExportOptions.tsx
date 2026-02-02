@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from 'react'
-import { Download, Settings, Share2, CheckCircle, Clock, FileVideo, Smartphone, Monitor, Globe } from 'lucide-react'
+import { Download, Settings, Share2, CheckCircle, Clock, Upload } from 'lucide-react'
 
 interface ExportPreset {
   id: string
@@ -11,7 +11,7 @@ interface ExportPreset {
   resolution: string
   targetSize: string
   description: string
-  icon: any
+  icon: string
   popular?: boolean
 }
 
@@ -24,7 +24,7 @@ const EXPORT_PRESETS: ExportPreset[] = [
     resolution: '1080x1920',
     targetSize: '~15MB',
     description: 'Perfect for Instagram Stories and Reels',
-    icon: Smartphone,
+    icon: '📱',
     popular: true
   },
   {
@@ -35,7 +35,7 @@ const EXPORT_PRESETS: ExportPreset[] = [
     resolution: '1920x1080',
     targetSize: '~50MB',
     description: 'High quality for YouTube uploads',
-    icon: Monitor,
+    icon: '💻',
     popular: true
   },
   {
@@ -46,7 +46,7 @@ const EXPORT_PRESETS: ExportPreset[] = [
     resolution: '1080x1920',
     targetSize: '~20MB',
     description: 'Optimized for TikTok algorithm',
-    icon: Smartphone
+    icon: '📱'
   },
   {
     id: 'facebook-hd',
@@ -56,7 +56,7 @@ const EXPORT_PRESETS: ExportPreset[] = [
     resolution: '1280x720',
     targetSize: '~25MB',
     description: 'HD quality for Facebook feed',
-    icon: Globe
+    icon: '🌐'
   },
   {
     id: 'web-optimized',
@@ -66,7 +66,7 @@ const EXPORT_PRESETS: ExportPreset[] = [
     resolution: '1280x720',
     targetSize: '~10MB',
     description: 'Small file size for web sharing',
-    icon: Globe
+    icon: '🌐'
   },
   {
     id: 'high-quality',
@@ -76,7 +76,7 @@ const EXPORT_PRESETS: ExportPreset[] = [
     resolution: '3840x2160',
     targetSize: '~200MB',
     description: 'Maximum quality for archiving',
-    icon: FileVideo
+    icon: '🎥'
   }
 ]
 
@@ -196,9 +196,7 @@ export default function ExportOptions({
           <div className="mb-6">
             <h3 className="font-medium mb-3">Quick Export Presets</h3>
             <div className="space-y-2">
-              {EXPORT_PRESETS.map(preset => {
-                const Icon = preset.icon
-                return (
+              {EXPORT_PRESETS.map(preset => (
                   <div
                     key={preset.id}
                     className={`p-3 rounded-lg border cursor-pointer transition-all ${
@@ -210,7 +208,7 @@ export default function ExportOptions({
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <Icon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                        <span className="text-lg">{preset.icon}</span>
                         <div>
                           <div className="flex items-center gap-2">
                             <span className="font-medium">{preset.name}</span>
@@ -230,10 +228,10 @@ export default function ExportOptions({
                         <div className="text-xs text-gray-400">Quality</div>
                       </div>
                     </div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">{preset.description}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">{preset.description}                    </p>
                   </div>
                 )
-              })}
+              )}
             </div>
           </div>
 
