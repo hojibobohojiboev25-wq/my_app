@@ -1,18 +1,6 @@
 import Link from 'next/link'
-import dynamic from 'next/dynamic'
-import { useTutorial } from '../components/useTutorial'
-
-// Dynamically import Tutorial to avoid SSR issues
-const Tutorial = dynamic(() => import('../components/Tutorial').then(mod => ({ default: mod.default })), {
-  ssr: false,
-  loading: () => null
-})
 
 export default function Home() {
-  const { shouldShowTutorial, completeTutorial } = useTutorial()
-
-  // Only render tutorial on client side
-  const showTutorial = typeof window !== 'undefined' && shouldShowTutorial
   return (
     <main className="px-4 pt-6">
       <header className="flex items-center justify-between">
@@ -39,10 +27,6 @@ export default function Home() {
       </section>
 
       <footer className="mt-8 text-xs text-gray-400 dark:text-gray-500">Built as a demo PWA focused on mobile UX</footer>
-
-      {showTutorial && (
-        <Tutorial onComplete={completeTutorial} onClose={completeTutorial} />
-      )}
 
     </main>
   )
