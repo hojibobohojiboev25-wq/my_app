@@ -7,6 +7,7 @@ import { AppProvider } from '../contexts/AppContext'
 import dynamic from 'next/dynamic'
 const BottomNav = dynamic(() => import('../components/BottomNav'), { ssr: false })
 const AppLoader = dynamic(() => import('../components/AppLoader'), { ssr: false })
+const PageTransition = dynamic(() => import('../components/PageTransition'), { ssr: false })
 
 export const metadata = {
   title: 'Vieditor - Ultimate Media Editor',
@@ -45,10 +46,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <ThemeProvider>
             <AuthProvider>
               <AppLoader>
-                <div className="app-shell max-w-md mx-auto w-full min-h-screen flex flex-col bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-                  <main className="flex-1">{children}</main>
-                  <BottomNav />
-                </div>
+                <PageTransition>
+                  <div className="app-shell max-w-md mx-auto w-full min-h-screen flex flex-col bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+                    <main className="flex-1">{children}</main>
+                    <BottomNav />
+                  </div>
+                </PageTransition>
               </AppLoader>
             </AuthProvider>
           </ThemeProvider>

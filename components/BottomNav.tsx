@@ -31,8 +31,7 @@ export default function BottomNav(){
                   : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800'
               }`}
             >
-              <span className="text-lg mb-0.5">{item.icon}</span>
-              <span className="text-xs font-medium truncate">{t(item.labelKey)}</span>
+              <span className="text-xl">{item.icon}</span>
             </Link>
           )
         })}

@@ -99,11 +99,6 @@ export default function Profile(){
               </div>
             </div>
           </div>
-          {user.role === 'admin' && (
-            <div className="mt-3">
-              <a href="/admin" className="text-sm text-blue-600 dark:text-blue-400 hover:underline">Go to Admin Dashboard</a>
-            </div>
-          )}
         </div>
       )}
 

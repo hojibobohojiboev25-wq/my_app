@@ -5,98 +5,208 @@ import Link from 'next/link'
 import { Smartphone, Monitor, Square, Instagram, Youtube, Facebook, Palette, Star } from 'lucide-react'
 
 const TEMPLATES = [
+  // Professional Templates
   {
-    id: 'instagram-story',
-    name: 'Instagram Story',
-    platform: 'Instagram',
-    aspectRatio: '9:16',
-    dimensions: '1080x1920',
-    icon: Instagram,
-    category: 'Social Media',
-    description: 'Vertical format perfect for Instagram Stories',
-    popular: true
-  },
-  {
-    id: 'instagram-post',
-    name: 'Instagram Post',
-    platform: 'Instagram',
-    aspectRatio: '1:1',
-    dimensions: '1080x1080',
-    icon: Instagram,
-    category: 'Social Media',
-    description: 'Square format for Instagram feed posts',
-    popular: true
-  },
-  {
-    id: 'youtube-short',
-    name: 'YouTube Short',
-    platform: 'YouTube',
-    aspectRatio: '9:16',
-    dimensions: '1080x1920',
-    icon: Youtube,
-    category: 'Social Media',
-    description: 'Short-form vertical videos for YouTube',
-    popular: true
-  },
-  {
-    id: 'youtube-video',
-    name: 'YouTube Video',
-    platform: 'YouTube',
+    id: 'business-promo',
+    name: 'Business Promo',
+    platform: 'Professional',
     aspectRatio: '16:9',
     dimensions: '1920x1080',
-    icon: Youtube,
-    category: 'Social Media',
-    description: 'Standard horizontal format for YouTube videos'
+    category: 'Business',
+    description: 'Professional business presentation with clean animations',
+    thumbnail: '/templates/business-promo.jpg',
+    features: ['Corporate colors', 'Professional typography', 'Call-to-action overlay'],
+    popular: true,
+    preset: {
+      filters: { brightness: 105, contrast: 110, saturation: 95 },
+      text: { font: 'Inter', size: 48, color: '#1f2937', position: 'center' },
+      transitions: 'fade'
+    }
   },
   {
-    id: 'facebook-post',
-    name: 'Facebook Post',
-    platform: 'Facebook',
-    aspectRatio: '4:5',
-    dimensions: '1080x1350',
-    icon: Facebook,
-    category: 'Social Media',
-    description: 'Vertical format optimized for Facebook feed'
+    id: 'product-showcase',
+    name: 'Product Showcase',
+    platform: 'E-commerce',
+    aspectRatio: '9:16',
+    dimensions: '1080x1920',
+    category: 'Business',
+    description: 'Dynamic product demonstration with zoom effects',
+    thumbnail: '/templates/product-showcase.jpg',
+    features: ['Product focus', 'Zoom animations', 'Price overlay'],
+    popular: true,
+    preset: {
+      filters: { brightness: 110, contrast: 105, saturation: 115 },
+      text: { font: 'Poppins', size: 36, color: '#ffffff', position: 'bottom' },
+      transitions: 'slide'
+    }
   },
   {
-    id: 'tiktok',
-    name: 'TikTok Video',
+    id: 'event-invitation',
+    name: 'Event Invitation',
+    platform: 'Events',
+    aspectRatio: '1:1',
+    dimensions: '1080x1080',
+    category: 'Events',
+    description: 'Elegant event invitation with animated elements',
+    thumbnail: '/templates/event-invitation.jpg',
+    features: ['Date/time display', 'Location info', 'RSVP button'],
+    preset: {
+      filters: { brightness: 115, contrast: 100, saturation: 105 },
+      text: { font: 'Playfair Display', size: 42, color: '#1a365d', position: 'center' },
+      transitions: 'scale'
+    }
+  },
+
+  // Social Media Templates
+  {
+    id: 'instagram-story-fashion',
+    name: 'Fashion Story',
+    platform: 'Instagram',
+    aspectRatio: '9:16',
+    dimensions: '1080x1920',
+    category: 'Social Media',
+    description: 'Trendy fashion lookbook with swipe animations',
+    thumbnail: '/templates/instagram-story-fashion.jpg',
+    features: ['Multiple slides', 'Product tags', 'Music sync'],
+    preset: {
+      filters: { brightness: 108, contrast: 102, saturation: 118 },
+      text: { font: 'Montserrat', size: 28, color: '#ffffff', position: 'overlay' },
+      transitions: 'swipe'
+    }
+  },
+  {
+    id: 'tiktok-dance',
+    name: 'Dance Challenge',
     platform: 'TikTok',
     aspectRatio: '9:16',
     dimensions: '1080x1920',
-    icon: Smartphone,
     category: 'Social Media',
-    description: 'Vertical format for TikTok videos'
+    description: 'Energetic dance video with beat-matched effects',
+    thumbnail: '/templates/tiktok-dance.jpg',
+    features: ['Beat detection', 'Color effects', 'Text animations'],
+    popular: true,
+    preset: {
+      filters: { brightness: 120, contrast: 95, saturation: 125 },
+      text: { font: 'Impact', size: 32, color: '#ff6b35', position: 'dynamic' },
+      transitions: 'flash'
+    }
   },
   {
-    id: 'twitter-video',
-    name: 'Twitter Video',
-    platform: 'Twitter',
-    aspectRatio: '16:9',
-    dimensions: '1280x720',
-    icon: Monitor,
-    category: 'Social Media',
-    description: 'Horizontal format for Twitter videos'
-  },
-  {
-    id: 'cinematic-169',
-    name: 'Cinematic 16:9',
-    platform: 'General',
+    id: 'youtube-tutorial',
+    name: 'Tutorial Video',
+    platform: 'YouTube',
     aspectRatio: '16:9',
     dimensions: '1920x1080',
-    icon: Monitor,
-    category: 'Professional',
-    description: 'Wide cinematic format for professional videos'
+    category: 'Education',
+    description: 'Educational content with step-by-step animations',
+    thumbnail: '/templates/youtube-tutorial.jpg',
+    features: ['Step indicators', 'Progress bar', 'Voiceover sync'],
+    preset: {
+      filters: { brightness: 105, contrast: 108, saturation: 100 },
+      text: { font: 'Roboto', size: 38, color: '#2d3748', position: 'top' },
+      transitions: 'reveal'
+    }
+  },
+
+  // Creative Templates
+  {
+    id: 'travel-vlog',
+    name: 'Travel Vlog',
+    platform: 'Content Creator',
+    aspectRatio: '16:9',
+    dimensions: '1920x1080',
+    category: 'Lifestyle',
+    description: 'Cinematic travel footage with location overlays',
+    thumbnail: '/templates/travel-vlog.jpg',
+    features: ['Map integration', 'Location pins', 'Weather effects'],
+    preset: {
+      filters: { brightness: 112, contrast: 106, saturation: 115 },
+      text: { font: 'Lato', size: 44, color: '#ffffff', position: 'bottom' },
+      transitions: 'pan'
+    }
   },
   {
-    id: 'square-promo',
-    name: 'Square Promo',
-    platform: 'General',
-    aspectRatio: '1:1',
-    dimensions: '1080x1080',
-    icon: Square,
-    category: 'Business',
-    description: 'Square format perfect for promotional content'
+    id: 'wedding-highlight',
+    name: 'Wedding Highlight',
+    platform: 'Events',
+    aspectRatio: '16:9',
+    dimensions: '1920x1080',
+    category: 'Personal',
+    description: 'Romantic wedding video with smooth transitions',
+    thumbnail: '/templates/wedding-highlight.jpg',
+    features: ['Love theme', 'Soft filters', 'Music sync'],
+    preset: {
+      filters: { brightness: 118, contrast: 98, saturation: 108 },
+      text: { font: 'Great Vibes', size: 52, color: '#d4af37', position: 'center' },
+      transitions: 'dissolve'
+    }
+  },
+  {
+    id: 'fitness-motivation',
+    name: 'Fitness Motivation',
+    platform: 'Health & Fitness',
+    aspectRatio: '9:16',
+    dimensions: '1080x1920',
+    category: 'Sports',
+    description: 'High-energy workout video with motivational text',
+    thumbnail: '/templates/fitness-motivation.jpg',
+    features: ['Timer overlays', 'Progress tracking', 'Motivational quotes'],
+    preset: {
+      filters: { brightness: 115, contrast: 112, saturation: 120 },
+      text: { font: 'Bebas Neue', size: 40, color: '#ff4757', position: 'dynamic' },
+      transitions: 'bounce'
+    }
+  },
+
+  // Advanced Templates
+  {
+    id: 'documentary-style',
+    name: 'Documentary',
+    platform: 'Professional',
+    aspectRatio: '16:9',
+    dimensions: '1920x1080',
+    category: 'Professional',
+    description: 'Professional documentary style with interviews',
+    thumbnail: '/templates/documentary-style.jpg',
+    features: ['B-roll integration', 'Subtitles', 'Professional grading'],
+    preset: {
+      filters: { brightness: 95, contrast: 115, saturation: 85 },
+      text: { font: 'Source Sans Pro', size: 36, color: '#ffffff', position: 'bottom' },
+      transitions: 'wipe'
+    }
+  },
+  {
+    id: 'gaming-highlights',
+    name: 'Gaming Highlights',
+    platform: 'Gaming',
+    aspectRatio: '16:9',
+    dimensions: '1920x1080',
+    category: 'Entertainment',
+    description: 'Exciting gaming moments with effects and text',
+    thumbnail: '/templates/gaming-highlights.jpg',
+    features: ['Slow motion', 'Screen effects', 'Score overlays'],
+    popular: true,
+    preset: {
+      filters: { brightness: 110, contrast: 105, saturation: 130 },
+      text: { font: 'Orbitron', size: 34, color: '#00ff88', position: 'overlay' },
+      transitions: 'glitch'
+    }
+  },
+  {
+    id: 'music-video',
+    name: 'Music Video',
+    platform: 'Music',
+    aspectRatio: '16:9',
+    dimensions: '1920x1080',
+    category: 'Entertainment',
+    description: 'Artistic music video with synchronized effects',
+    thumbnail: '/templates/music-video.jpg',
+    features: ['Beat visualization', 'Color sync', 'Lyrics overlay'],
+    preset: {
+      filters: { brightness: 108, contrast: 102, saturation: 125 },
+      text: { font: 'Abril Fatface', size: 46, color: '#ffffff', position: 'center' },
+      transitions: 'pulse'
+    }
   }
 ]
 

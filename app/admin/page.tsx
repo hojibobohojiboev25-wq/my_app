@@ -1,8 +1,6 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import ProtectedAdmin from '../../components/ProtectedAdmin'
-import { useAuth } from '../../components/AuthProvider'
 import { useApp } from '../../contexts/AppContext'
 
 interface User {
@@ -16,11 +14,41 @@ interface User {
 }
 
 export default function AdminPage(){
-  const { user } = useAuth()
   const { t } = useApp()
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [loginData, setLoginData] = useState({ username: '', password: '' })
+  const [showLogin, setShowLogin] = useState(true)
   const [users, setUsers] = useState<User[]>([])
   const [showPasswordModal, setShowPasswordModal] = useState(false)
   const [showAddUserModal, setShowAddUserModal] = useState(false)
+
+  // Admin authentication
+  const ADMIN_CREDENTIALS = {
+    username: 'admin',
+    password: 'admin123'
+  }
+
+  const handleAdminLogin = () => {
+    if (loginData.username === ADMIN_CREDENTIALS.username &&
+        loginData.password === ADMIN_CREDENTIALS.password) {
+      setIsAuthenticated(true)
+      setShowLogin(false)
+      localStorage.setItem('admin_authenticated', 'true')
+    } else {
+      alert('Invalid credentials')
+    }
+  }
+
+  // Check if already authenticated
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const auth = localStorage.getItem('admin_authenticated')
+      if (auth === 'true') {
+        setIsAuthenticated(true)
+        setShowLogin(false)
+      }
+    }
+  }, [])
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
     newPassword: '',
@@ -131,8 +159,66 @@ export default function AdminPage(){
     totalProjects: 24 // Mock data
   }
 
+  // Admin Login Screen
+  if (showLogin) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+        <div className="bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full p-8 border border-gray-700">
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <span className="text-2xl">🔐</span>
+            </div>
+            <h1 className="text-2xl font-bold text-white mb-2">Admin Access</h1>
+            <p className="text-gray-400">Enter credentials to access admin panel</p>
+          </div>
+
+          <div className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Username
+              </label>
+              <input
+                type="text"
+                value={loginData.username}
+                onChange={(e) => setLoginData(prev => ({ ...prev, username: e.target.value }))}
+                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Enter username"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Password
+              </label>
+              <input
+                type="password"
+                value={loginData.password}
+                onChange={(e) => setLoginData(prev => ({ ...prev, password: e.target.value }))}
+                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Enter password"
+                onKeyPress={(e) => e.key === 'Enter' && handleAdminLogin()}
+              />
+            </div>
+
+            <button
+              onClick={handleAdminLogin}
+              className="w-full py-3 px-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105"
+            >
+              Access Admin Panel
+            </button>
+
+            <div className="text-center">
+              <p className="text-xs text-gray-500">
+                Contact administrator for credentials
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <ProtectedAdmin>
       <main className="px-4 pt-6 pb-24">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t('adminDashboard')}</h1>
