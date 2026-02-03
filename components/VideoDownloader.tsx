@@ -122,16 +122,6 @@ export default function VideoDownloader({ videoUrl, videoName = 'edited-video' }
           setIsDownloading(false)
           setDownloadComplete(true)
 
-          // Add to export history
-          const newExport = {
-            id: Date.now().toString(),
-            preset: DOWNLOAD_OPTIONS.find(opt => opt.id === formatId)?.name || 'Custom',
-            timestamp: new Date().toLocaleString(),
-            size: DOWNLOAD_OPTIONS.find(opt => opt.id === formatId)?.size || '~10MB',
-            status: 'completed' as const
-          }
-          setExportHistory(prev => [newExport, ...prev.slice(0, 4)])
-
           // Reset after 3 seconds
           setTimeout(() => {
             setDownloadComplete(false)
