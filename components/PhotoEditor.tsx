@@ -105,7 +105,7 @@ export default function PhotoEditor({ onClose }: { onClose?: () => void }) {
   }, [])
 
   // Apply filters when dependencies change
-  React.useEffect(() => {
+  useEffect(() => {
     if (selectedImage) {
       applyFilters()
     }
