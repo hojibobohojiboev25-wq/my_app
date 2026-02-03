@@ -1,28 +1,31 @@
 import Link from 'next/link'
+import { useApp } from '../contexts/AppContext'
 
 export default function Home() {
+  const { t } = useApp()
+
   return (
     <main className="px-4 pt-6">
       <header className="flex items-center justify-between">
-        <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">Vieditor</h1>
-        <div className="text-sm text-gray-500 dark:text-gray-400">Ultimate Mobile Media Editor</div>
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">{t('appName')}</h1>
+        <div className="text-sm text-gray-500 dark:text-gray-400">{t('tagline')}</div>
       </header>
 
       <section className="mt-6">
-        <div className="relative bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 rounded-2xl p-6 shadow-xl overflow-hidden">
+        <div className="relative bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-2xl p-6 shadow-xl overflow-hidden">
           <div className="absolute inset-0 bg-black/10"></div>
           <div className="relative z-10">
             <div className="flex items-center gap-2 mb-2">
               <span className="text-2xl">🎬</span>
-              <span className="text-white/80 text-sm font-medium">Professional Video Editing</span>
+              <span className="text-white/80 text-sm font-medium">{t('tagline')}</span>
             </div>
-            <h2 className="text-2xl font-bold text-white mb-2">Create stunning videos</h2>
+            <h2 className="text-2xl font-bold text-white mb-2">{t('chooseContentType')}</h2>
             <p className="text-white/90 text-sm leading-relaxed mb-6">
-              Upload, edit, and export professional-quality videos directly on your mobile device with advanced tools and templates.
+              {t('editVideosWithTools')}
             </p>
-            <Link href="/create" className="inline-flex items-center gap-2 px-6 py-3 bg-white text-blue-600 font-semibold rounded-xl hover:bg-blue-50 transition-all duration-200 transform hover:scale-105 shadow-lg">
+            <Link href="/create" className="inline-flex items-center gap-2 px-6 py-3 bg-white text-indigo-600 font-semibold rounded-xl hover:bg-blue-50 transition-all duration-200 transform hover:scale-105 shadow-lg">
               <span className="text-lg">✨</span>
-              Start Creating
+              {t('create')}
             </Link>
           </div>
 
@@ -39,7 +42,7 @@ export default function Home() {
             <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             <div className="relative z-10">
               <div className="text-3xl mb-2 animate-float">🎨</div>
-              <div className="font-semibold text-lg">Templates</div>
+              <div className="font-semibold text-lg">{t('templates')}</div>
               <div className="text-xs text-purple-100 mt-1 opacity-90">Professional designs</div>
             </div>
           </Link>
@@ -48,7 +51,7 @@ export default function Home() {
             <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             <div className="relative z-10">
               <div className="text-3xl mb-2 animate-float" style={{animationDelay: '0.5s'}}>📁</div>
-              <div className="font-semibold text-lg">My Projects</div>
+              <div className="font-semibold text-lg">{t('projects')}</div>
               <div className="text-xs text-green-100 mt-1 opacity-90">Cloud storage</div>
             </div>
           </Link>
@@ -57,7 +60,7 @@ export default function Home() {
             <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             <div className="relative z-10">
               <div className="text-3xl mb-2 animate-float" style={{animationDelay: '1s'}}>⚡</div>
-              <div className="font-semibold text-lg">Quick Edit</div>
+              <div className="font-semibold text-lg">{t('create')}</div>
               <div className="text-xs text-orange-100 mt-1 opacity-90">Fast processing</div>
             </div>
           </Link>
@@ -66,7 +69,7 @@ export default function Home() {
             <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             <div className="relative z-10">
               <div className="text-3xl mb-2 animate-float" style={{animationDelay: '1.5s'}}>📊</div>
-              <div className="font-semibold text-lg">Analytics</div>
+              <div className="font-semibold text-lg">{t('profile')}</div>
               <div className="text-xs text-blue-100 mt-1 opacity-90">Performance insights</div>
             </div>
           </Link>
@@ -76,7 +79,7 @@ export default function Home() {
       {/* Features Showcase */}
       <section className="mt-8">
         <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border dark:border-gray-700">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Why Choose VideoForge Pro?</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Why Choose Vieditor?</h3>
           <div className="space-y-3">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
@@ -103,8 +106,8 @@ export default function Home() {
                 <span className="text-purple-600 text-sm">📱</span>
               </div>
               <div>
-                <div className="font-medium text-gray-900 dark:text-gray-100">Mobile First</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">Optimized for phones and tablets</div>
+                <div className="font-medium text-gray-900 dark:text-gray-100">Cross-Platform</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Optimized for phones, tablets and desktops</div>
               </div>
             </div>
           </div>
