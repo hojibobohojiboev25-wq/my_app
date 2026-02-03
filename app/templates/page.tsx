@@ -259,8 +259,8 @@ export default function TemplatesPage() {
   return (
     <main className="px-4 pt-6 pb-24">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-semibold">Templates</h1>
-        <Link href="/create" className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm">
+        <h1 className="text-xl font-semibold text-white">Templates</h1>
+        <Link href="/create" className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm transition-colors">
           Start Creating
         </Link>
       </div>
@@ -272,7 +272,7 @@ export default function TemplatesPage() {
           placeholder="Search templates..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full rounded-lg border px-4 py-3"
+          className="w-full rounded-lg border border-gray-600 bg-gray-700 text-white placeholder-gray-400 px-4 py-3"
         />
 
         <div className="flex gap-2 overflow-x-auto">
@@ -280,10 +280,10 @@ export default function TemplatesPage() {
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`px-4 py-2 rounded-full text-sm whitespace-nowrap ${
+              className={`px-4 py-2 rounded-full text-sm whitespace-nowrap transition-colors ${
                 selectedCategory === category
                   ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 text-gray-700'
+                  : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
               }`}
             >
               {category}
@@ -294,17 +294,15 @@ export default function TemplatesPage() {
 
       {/* Templates Grid */}
       <section className="mb-8">
-        <h2 className="text-lg font-medium mb-4">Video Formats</h2>
+        <h2 className="text-lg font-medium mb-4 text-white">Video Formats</h2>
         <div className="grid gap-4">
-          {filteredTemplates.map(template => {
-            const Icon = template.icon
-            return (
-              <div key={template.id} className="bg-white rounded-lg p-4 shadow-sm border">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-gray-100 rounded-lg">
-                      <Icon className="w-6 h-6 text-gray-600" />
-                    </div>
+          {filteredTemplates.map(template => (
+            <div key={template.id} className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-gray-700 rounded-lg">
+                    <span className="text-2xl">{template.icon}</span>
+                  </div>
                     <div>
                       <div className="flex items-center gap-2">
                         <h3 className="font-medium">{template.name}</h3>
@@ -315,19 +313,19 @@ export default function TemplatesPage() {
                       <p className="text-sm text-gray-500">{template.platform}</p>
                     </div>
                   </div>
-                  <div className="text-right text-xs text-gray-500">
+                  <div className="text-right text-xs text-gray-400">
                     <div>{template.aspectRatio}</div>
                     <div>{template.dimensions}</div>
                   </div>
                 </div>
 
-                <p className="text-sm text-gray-600 mb-3">{template.description}</p>
+                <p className="text-sm text-gray-400 mb-3">{template.description}</p>
 
                 <div className="flex gap-2">
-                  <button className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm">
+                  <button className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm transition-colors">
                     Use Template
                   </button>
-                  <button className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm">
+                  <button className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-lg text-sm transition-colors">
                     Preview
                   </button>
                 </div>
@@ -339,14 +337,14 @@ export default function TemplatesPage() {
 
       {/* Themes Section */}
       <section>
-        <h2 className="text-lg font-medium mb-4">Color Themes</h2>
+        <h2 className="text-lg font-medium mb-4 text-white">Color Themes</h2>
         <div className="grid gap-4">
           {THEMES.map(theme => (
-            <div key={theme.id} className="bg-white rounded-lg p-4 shadow-sm border">
+            <div key={theme.id} className="bg-gray-800 rounded-lg p-4 border border-gray-700">
               <div className="flex items-center justify-between mb-3">
                 <div>
-                  <h3 className="font-medium">{theme.name}</h3>
-                  <p className="text-sm text-gray-600">{theme.description}</p>
+                  <h3 className="font-medium text-white">{theme.name}</h3>
+                  <p className="text-sm text-gray-400">{theme.description}</p>
                 </div>
                 <div className="flex gap-1">
                   {theme.colors.map((color, i) => (
@@ -359,7 +357,7 @@ export default function TemplatesPage() {
                 </div>
               </div>
 
-              <button className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm">
+              <button className="w-full px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-lg text-sm transition-colors">
                 Apply Theme
               </button>
             </div>
