@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Smartphone, Monitor, Square, Instagram, Youtube, Facebook, Palette, Star } from 'lucide-react'
 
 const TEMPLATES = [
   // Professional Templates
@@ -13,6 +12,7 @@ const TEMPLATES = [
     aspectRatio: '16:9',
     dimensions: '1920x1080',
     category: 'Business',
+    icon: '💼',
     description: 'Professional business presentation with clean animations',
     thumbnail: '/templates/business-promo.jpg',
     features: ['Corporate colors', 'Professional typography', 'Call-to-action overlay'],
@@ -30,6 +30,7 @@ const TEMPLATES = [
     aspectRatio: '9:16',
     dimensions: '1080x1920',
     category: 'Business',
+    icon: '🛍️',
     description: 'Dynamic product demonstration with zoom effects',
     thumbnail: '/templates/product-showcase.jpg',
     features: ['Product focus', 'Zoom animations', 'Price overlay'],
@@ -47,6 +48,7 @@ const TEMPLATES = [
     aspectRatio: '1:1',
     dimensions: '1080x1080',
     category: 'Events',
+    icon: '📅',
     description: 'Elegant event invitation with animated elements',
     thumbnail: '/templates/event-invitation.jpg',
     features: ['Date/time display', 'Location info', 'RSVP button'],
@@ -65,6 +67,7 @@ const TEMPLATES = [
     aspectRatio: '9:16',
     dimensions: '1080x1920',
     category: 'Social Media',
+    icon: '👗',
     description: 'Trendy fashion lookbook with swipe animations',
     thumbnail: '/templates/instagram-story-fashion.jpg',
     features: ['Multiple slides', 'Product tags', 'Music sync'],
@@ -81,13 +84,14 @@ const TEMPLATES = [
     aspectRatio: '9:16',
     dimensions: '1080x1920',
     category: 'Social Media',
+    icon: '💃',
     description: 'Energetic dance video with beat-matched effects',
     thumbnail: '/templates/tiktok-dance.jpg',
     features: ['Beat detection', 'Color effects', 'Text animations'],
     popular: true,
     preset: {
       filters: { brightness: 120, contrast: 95, saturation: 125 },
-      text: { font: 'Impact', size: 32, color: '#ff6b35', position: 'dynamic' },
+      text: { font: 'Impact', size: 32, color: '#ff4757', position: 'dynamic' },
       transitions: 'flash'
     }
   },
@@ -98,6 +102,7 @@ const TEMPLATES = [
     aspectRatio: '16:9',
     dimensions: '1920x1080',
     category: 'Education',
+    icon: '📚',
     description: 'Educational content with step-by-step animations',
     thumbnail: '/templates/youtube-tutorial.jpg',
     features: ['Step indicators', 'Progress bar', 'Voiceover sync'],
@@ -116,6 +121,7 @@ const TEMPLATES = [
     aspectRatio: '16:9',
     dimensions: '1920x1080',
     category: 'Lifestyle',
+    icon: '✈️',
     description: 'Cinematic travel footage with location overlays',
     thumbnail: '/templates/travel-vlog.jpg',
     features: ['Map integration', 'Location pins', 'Weather effects'],
@@ -132,6 +138,7 @@ const TEMPLATES = [
     aspectRatio: '16:9',
     dimensions: '1920x1080',
     category: 'Personal',
+    icon: '💒',
     description: 'Romantic wedding video with smooth transitions',
     thumbnail: '/templates/wedding-highlight.jpg',
     features: ['Love theme', 'Soft filters', 'Music sync'],
@@ -148,6 +155,7 @@ const TEMPLATES = [
     aspectRatio: '9:16',
     dimensions: '1080x1920',
     category: 'Sports',
+    icon: '💪',
     description: 'High-energy workout video with motivational text',
     thumbnail: '/templates/fitness-motivation.jpg',
     features: ['Timer overlays', 'Progress tracking', 'Motivational quotes'],
@@ -166,6 +174,7 @@ const TEMPLATES = [
     aspectRatio: '16:9',
     dimensions: '1920x1080',
     category: 'Professional',
+    icon: '🎥',
     description: 'Professional documentary style with interviews',
     thumbnail: '/templates/documentary-style.jpg',
     features: ['B-roll integration', 'Subtitles', 'Professional grading'],
@@ -182,6 +191,7 @@ const TEMPLATES = [
     aspectRatio: '16:9',
     dimensions: '1920x1080',
     category: 'Entertainment',
+    icon: '🎮',
     description: 'Exciting gaming moments with effects and text',
     thumbnail: '/templates/gaming-highlights.jpg',
     features: ['Slow motion', 'Screen effects', 'Score overlays'],
@@ -199,6 +209,7 @@ const TEMPLATES = [
     aspectRatio: '16:9',
     dimensions: '1920x1080',
     category: 'Entertainment',
+    icon: '🎵',
     description: 'Artistic music video with synchronized effects',
     thumbnail: '/templates/music-video.jpg',
     features: ['Beat visualization', 'Color sync', 'Lyrics overlay'],
@@ -303,35 +314,32 @@ export default function TemplatesPage() {
                   <div className="p-2 bg-gray-700 rounded-lg">
                     <span className="text-2xl">{template.icon}</span>
                   </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-medium">{template.name}</h3>
-                        {template.popular && (
-                          <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                        )}
-                      </div>
-                      <p className="text-sm text-gray-500">{template.platform}</p>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-semibold text-white">{template.name}</h3>
+                      {template.popular && <span className="text-xs bg-yellow-600 text-yellow-100 px-2 py-1 rounded-full">Popular</span>}
                     </div>
-                  </div>
-                  <div className="text-right text-xs text-gray-400">
-                    <div>{template.aspectRatio}</div>
-                    <div>{template.dimensions}</div>
+                    <p className="text-sm text-gray-400">{template.platform}</p>
                   </div>
                 </div>
-
-                <p className="text-sm text-gray-400 mb-3">{template.description}</p>
-
-                <div className="flex gap-2">
-                  <button className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm transition-colors">
-                    Use Template
-                  </button>
-                  <button className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-lg text-sm transition-colors">
-                    Preview
-                  </button>
+                <div className="text-right text-xs text-gray-400">
+                  <div>{template.aspectRatio}</div>
+                  <div>{template.dimensions}</div>
                 </div>
               </div>
-            )
-          })}
+
+              <p className="text-sm text-gray-400 mb-3">{template.description}</p>
+
+              <div className="flex gap-2">
+                <button className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm transition-colors">
+                  Use Template
+                </button>
+                <button className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-lg text-sm transition-colors">
+                  Preview
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -350,7 +358,7 @@ export default function TemplatesPage() {
                   {theme.colors.map((color, i) => (
                     <div
                       key={i}
-                      className="w-6 h-6 rounded-full border-2 border-white shadow-sm"
+                      className="w-6 h-6 rounded-full border-2 border-gray-600 shadow-sm"
                       style={{ backgroundColor: color }}
                     />
                   ))}
@@ -362,18 +370,6 @@ export default function TemplatesPage() {
               </button>
             </div>
           ))}
-        </div>
-      </section>
-
-      {/* Quick Actions */}
-      <section className="mt-8">
-        <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-6 text-center">
-          <Palette className="w-12 h-12 text-blue-600 mx-auto mb-3" />
-          <h3 className="font-medium mb-2">Create Custom Template</h3>
-          <p className="text-sm text-gray-600 mb-4">Design your own video format and save it as a reusable template</p>
-          <button className="px-6 py-3 bg-blue-600 text-white rounded-lg">
-            Create Custom
-          </button>
         </div>
       </section>
     </main>
