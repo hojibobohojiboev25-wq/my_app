@@ -6,7 +6,10 @@ import AudioEditor from '../../components/AudioEditor'
 import ExportOptions from '../../components/ExportOptions'
 import VideoDownloader from '../../components/VideoDownloader'
 import PhotoEditor from '../../components/PhotoEditor'
-import { RotateCw, Type, Music, Scissors, Zap, Filter, Download, Image, Video, Sparkles } from 'lucide-react'
+import ShareModal from '../../components/ShareModal'
+import KeyboardShortcuts from '../../components/KeyboardShortcuts'
+import QuickPreview from '../../components/QuickPreview'
+import { RotateCw, Type, Music, Scissors, Zap, Filter, Download, Image, Video, Sparkles, Share2, Eye } from 'lucide-react'
 
 export default function CreatePage() {
   const [file, setFile] = useState<File | null>(null)
@@ -28,15 +31,37 @@ export default function CreatePage() {
   const [grayscale, setGrayscale] = useState(0)
   const [invert, setInvert] = useState(0)
   const [opacity, setOpacity] = useState(100)
+  const [vignette, setVignette] = useState(0)
+  const [sharpen, setSharpen] = useState(0)
+  const [noise, setNoise] = useState(0)
+  const [pixelate, setPixelate] = useState(0)
+  const [chromaKey, setChromaKey] = useState<string | null>(null)
+  const [stabilization, setStabilization] = useState(false)
+  const [denoise, setDenoise] = useState(false)
+  const [colorCorrection, setColorCorrection] = useState({
+    shadows: 0,
+    highlights: 0,
+    exposure: 0,
+    temperature: 0
+  })
   const [textOverlay, setTextOverlay] = useState('')
-  const [textPosition, setTextPosition] = useState<'top' | 'center' | 'bottom'>('bottom')
-  const [activeTool, setActiveTool] = useState<'trim' | 'filter' | 'text' | 'audio'>('trim')
-  const [activeFilter, setActiveFilter] = useState<'basic' | 'color' | 'effects' | 'advanced'>('basic')
+  const [textPosition, setTextPosition] = useState<'top' | 'center' | 'bottom' | 'custom'>('bottom')
+  const [textSize, setTextSize] = useState(24)
+  const [textColor, setTextColor] = useState('#ffffff')
+  const [textFont, setTextFont] = useState('Arial')
+  const [textAnimation, setTextAnimation] = useState<'none' | 'fade' | 'slide' | 'bounce' | 'glow'>('none')
+  const [textX, setTextX] = useState(50)
+  const [textY, setTextY] = useState(50)
+  const [activeTool, setActiveTool] = useState<'trim' | 'filter' | 'text' | 'audio' | 'effects' | 'advanced'>('trim')
+  const [activeFilter, setActiveFilter] = useState<'basic' | 'color' | 'effects' | 'advanced' | 'correction'>('basic')
   const [contentType, setContentType] = useState<'video' | 'photo'>('video')
   const [showAudioEditor, setShowAudioEditor] = useState(false)
   const [showExportOptions, setShowExportOptions] = useState(false)
   const [showVideoDownloader, setShowVideoDownloader] = useState(false)
   const [showPhotoEditor, setShowPhotoEditor] = useState(false)
+  const [showShareModal, setShowShareModal] = useState(false)
+  const [showKeyboardShortcuts, setShowKeyboardShortcuts] = useState(false)
+  const [showQuickPreview, setShowQuickPreview] = useState(false)
 
   function onFile(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0] ?? null
@@ -53,9 +78,49 @@ export default function CreatePage() {
   function applyVideoFilters() {
     if (!videoRef.current) return
     const video = videoRef.current
-    video.style.filter = `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%) hue-rotate(${hue}deg) blur(${blur}px) sepia(${sepia}%) grayscale(${grayscale}%) invert(${invert}%) opacity(${opacity}%)`
-    video.style.transform = `rotate(${rotation}deg)`
+
+    // Advanced CSS filters
+    const filters = [
+      `brightness(${brightness + colorCorrection.exposure}%)`,
+      `contrast(${contrast}%)`,
+      `saturate(${saturation}%)`,
+      `hue-rotate(${hue + colorCorrection.temperature}deg)`,
+      `blur(${blur}px)`,
+      `sepia(${sepia}%)`,
+      `grayscale(${grayscale}%)`,
+      `invert(${invert}%)`,
+      `opacity(${opacity}%)`,
+      vignette > 0 ? `brightness(${100 - vignette}%)` : '',
+      sharpen > 0 ? `contrast(${100 + sharpen}%) brightness(${100 + sharpen * 0.5}%)` : '',
+      noise > 0 ? `contrast(${100 + noise}%)` : '',
+      pixelate > 0 ? `blur(${pixelate}px)` : ''
+    ].filter(Boolean).join(' ')
+
+    video.style.filter = filters
+    video.style.transform = `rotate(${rotation}deg) ${stabilization ? 'translateZ(0)' : ''}`
     video.playbackRate = playbackSpeed
+
+    // Apply text overlay styling
+    if (textOverlay) {
+      const textElement = document.getElementById('text-overlay')
+      if (textElement) {
+        textElement.style.fontSize = `${textSize}px`
+        textElement.style.color = textColor
+        textElement.style.fontFamily = textFont
+        textElement.style.left = textPosition === 'custom' ? `${textX}%` : '50%'
+        textElement.style.top = textPosition === 'custom' ? `${textY}%` : (
+          textPosition === 'top' ? '10%' : textPosition === 'bottom' ? '90%' : '50%'
+        )
+        textElement.style.transform = textPosition === 'custom' ? 'translate(-50%, -50%)' : 'translateX(-50%)'
+
+        // Apply text animation
+        textElement.className = `absolute pointer-events-none z-10 text-center ${
+          textAnimation === 'fade' ? 'animate-pulse' :
+          textAnimation === 'bounce' ? 'animate-bounce' :
+          textAnimation === 'glow' ? 'animate-pulse shadow-lg shadow-white' : ''
+        }`
+      }
+    }
   }
 
   function mockExport() {
@@ -84,6 +149,13 @@ export default function CreatePage() {
         <div className="flex items-center gap-2">
           <span className="text-sm text-gray-500 dark:text-gray-400">Professional Editor</span>
           <Sparkles className="w-5 h-5 text-yellow-500" />
+          <button
+            onClick={() => setShowKeyboardShortcuts(true)}
+            className="text-xs px-2 py-1 bg-gray-600 hover:bg-gray-500 text-gray-300 rounded transition-colors"
+            title="Keyboard Shortcuts"
+          >
+            ⌨️
+          </button>
         </div>
       </div>
 
@@ -227,10 +299,8 @@ export default function CreatePage() {
                 }}
               />
               {textOverlay && (
-                <div className={`absolute inset-0 flex ${textPosition === 'top' ? 'items-start' : textPosition === 'center' ? 'items-center' : 'items-end'} justify-center pointer-events-none p-4`}>
-                  <div className="bg-black bg-opacity-50 text-white px-3 py-1 rounded-lg text-lg font-semibold">
-                    {textOverlay}
-                  </div>
+                <div id="text-overlay" className="absolute inset-0 pointer-events-none">
+                  {textOverlay}
                 </div>
               )}
             </div>
@@ -238,25 +308,45 @@ export default function CreatePage() {
 
           {/* Professional Editing Tools */}
           <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border dark:border-gray-700">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Editing Tools</h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Editing Tools</h3>
+              <button
+                onClick={() => setShowQuickPreview(true)}
+                disabled={!file}
+                className="px-3 py-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg text-sm transition-colors flex items-center gap-1"
+              >
+                <Eye className="w-4 h-4" />
+                Preview
+              </button>
+            </div>
 
             {/* Tool Selection */}
-            <div className="grid grid-cols-4 gap-3 mb-6">
+            <div className="grid grid-cols-3 gap-2 mb-6">
               <button onClick={() => setActiveTool('trim')} className={`flex flex-col items-center p-3 rounded-lg transition-all ${activeTool === 'trim' ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'}`}>
-                <Scissors className="w-6 h-6 mb-1" />
+                <Scissors className="w-5 h-5 mb-1" />
                 <span className="text-xs font-medium">Trim</span>
               </button>
               <button onClick={() => setActiveTool('filter')} className={`flex flex-col items-center p-3 rounded-lg transition-all ${activeTool === 'filter' ? 'bg-purple-100 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'}`}>
-                <Filter className="w-6 h-6 mb-1" />
+                <Filter className="w-5 h-5 mb-1" />
                 <span className="text-xs font-medium">Filters</span>
               </button>
+              <button onClick={() => setActiveTool('effects')} className={`flex flex-col items-center p-3 rounded-lg transition-all ${activeTool === 'effects' ? 'bg-pink-100 dark:bg-pink-900/20 text-pink-700 dark:text-pink-300' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'}`}>
+                <Sparkles className="w-5 h-5 mb-1" />
+                <span className="text-xs font-medium">Effects</span>
+              </button>
+            </div>
+            <div className="grid grid-cols-3 gap-2 mb-6">
               <button onClick={() => setActiveTool('text')} className={`flex flex-col items-center p-3 rounded-lg transition-all ${activeTool === 'text' ? 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-300' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'}`}>
-                <Type className="w-6 h-6 mb-1" />
+                <Type className="w-5 h-5 mb-1" />
                 <span className="text-xs font-medium">Text</span>
               </button>
               <button onClick={() => setActiveTool('audio')} className={`flex flex-col items-center p-3 rounded-lg transition-all ${activeTool === 'audio' ? 'bg-orange-100 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'}`}>
-                <Music className="w-6 h-6 mb-1" />
+                <Music className="w-5 h-5 mb-1" />
                 <span className="text-xs font-medium">Audio</span>
+              </button>
+              <button onClick={() => setActiveTool('advanced')} className={`flex flex-col items-center p-3 rounded-lg transition-all ${activeTool === 'advanced' ? 'bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-300' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'}`}>
+                <Zap className="w-5 h-5 mb-1" />
+                <span className="text-xs font-medium">Advanced</span>
               </button>
             </div>
 
@@ -300,10 +390,10 @@ export default function CreatePage() {
                 <div className="text-sm text-gray-500 dark:text-gray-400">Video Filters</div>
 
                 {/* Filter Categories */}
-                <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1 mb-4">
+                <div className="grid grid-cols-3 gap-1 bg-gray-100 dark:bg-gray-700 rounded-lg p-1 mb-4">
                   <button
                     onClick={() => setActiveFilter('basic')}
-                    className={`flex-1 py-2 px-3 rounded-md text-sm ${
+                    className={`py-2 px-3 rounded-md text-sm ${
                       activeFilter === 'basic' ? 'bg-white dark:bg-gray-600 shadow-sm' : 'text-gray-600 dark:text-gray-400'
                     }`}
                   >
@@ -311,7 +401,7 @@ export default function CreatePage() {
                   </button>
                   <button
                     onClick={() => setActiveFilter('color')}
-                    className={`flex-1 py-2 px-3 rounded-md text-sm ${
+                    className={`py-2 px-3 rounded-md text-sm ${
                       activeFilter === 'color' ? 'bg-white dark:bg-gray-600 shadow-sm' : 'text-gray-600 dark:text-gray-400'
                     }`}
                   >
@@ -319,19 +409,29 @@ export default function CreatePage() {
                   </button>
                   <button
                     onClick={() => setActiveFilter('effects')}
-                    className={`flex-1 py-2 px-3 rounded-md text-sm ${
+                    className={`py-2 px-3 rounded-md text-sm ${
                       activeFilter === 'effects' ? 'bg-white dark:bg-gray-600 shadow-sm' : 'text-gray-600 dark:text-gray-400'
                     }`}
                   >
                     Effects
                   </button>
+                </div>
+                <div className="grid grid-cols-2 gap-1 bg-gray-100 dark:bg-gray-700 rounded-lg p-1 mb-4">
                   <button
                     onClick={() => setActiveFilter('advanced')}
-                    className={`flex-1 py-2 px-3 rounded-md text-sm ${
+                    className={`py-2 px-3 rounded-md text-sm ${
                       activeFilter === 'advanced' ? 'bg-white dark:bg-gray-600 shadow-sm' : 'text-gray-600 dark:text-gray-400'
                     }`}
                   >
                     Advanced
+                  </button>
+                  <button
+                    onClick={() => setActiveFilter('correction')}
+                    className={`py-2 px-3 rounded-md text-sm ${
+                      activeFilter === 'correction' ? 'bg-white dark:bg-gray-600 shadow-sm' : 'text-gray-600 dark:text-gray-400'
+                    }`}
+                  >
+                    Correction
                   </button>
                 </div>
 
@@ -424,8 +524,69 @@ export default function CreatePage() {
               </div>
             )}
 
-            {activeTool === 'text' && (
+            {activeFilter === 'correction' && (
               <div className="space-y-3">
+                <div>
+                  <label className="text-xs text-gray-500 dark:text-gray-400">Shadows</label>
+                  <input
+                    type="range"
+                    min={-50}
+                    max={50}
+                    value={colorCorrection.shadows}
+                    onChange={(e) => {
+                      setColorCorrection(prev => ({ ...prev, shadows: Number(e.target.value) }))
+                      applyVideoFilters()
+                    }}
+                    className="w-full mt-1"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-gray-500 dark:text-gray-400">Highlights</label>
+                  <input
+                    type="range"
+                    min={-50}
+                    max={50}
+                    value={colorCorrection.highlights}
+                    onChange={(e) => {
+                      setColorCorrection(prev => ({ ...prev, highlights: Number(e.target.value) }))
+                      applyVideoFilters()
+                    }}
+                    className="w-full mt-1"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-gray-500 dark:text-gray-400">Exposure</label>
+                  <input
+                    type="range"
+                    min={-50}
+                    max={50}
+                    value={colorCorrection.exposure}
+                    onChange={(e) => {
+                      setColorCorrection(prev => ({ ...prev, exposure: Number(e.target.value) }))
+                      applyVideoFilters()
+                    }}
+                    className="w-full mt-1"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-gray-500 dark:text-gray-400">Temperature</label>
+                  <input
+                    type="range"
+                    min={-50}
+                    max={50}
+                    value={colorCorrection.temperature}
+                    onChange={(e) => {
+                      setColorCorrection(prev => ({ ...prev, temperature: Number(e.target.value) }))
+                      applyVideoFilters()
+                    }}
+                    className="w-full mt-1"
+                  />
+                </div>
+              </div>
+            )}
+
+            {activeTool === 'text' && (
+              <div className="space-y-4">
                 <div className="text-sm text-gray-500 dark:text-gray-400">Text Overlay</div>
                 <input
                   type="text"
@@ -434,16 +595,123 @@ export default function CreatePage() {
                   onChange={(e) => setTextOverlay(e.target.value)}
                   className="w-full rounded border dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-gray-900 dark:text-gray-100"
                 />
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">Font Size</label>
+                    <input
+                      type="range"
+                      min={12}
+                      max={72}
+                      value={textSize}
+                      onChange={(e) => {
+                        setTextSize(Number(e.target.value))
+                        setTimeout(applyVideoFilters, 10)
+                      }}
+                      className="w-full"
+                    />
+                    <div className="text-xs text-center text-gray-400 mt-1">{textSize}px</div>
+                  </div>
+                  <div>
+                    <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">Font</label>
+                    <select
+                      value={textFont}
+                      onChange={(e) => {
+                        setTextFont(e.target.value)
+                        setTimeout(applyVideoFilters, 10)
+                      }}
+                      className="w-full rounded border dark:border-gray-600 bg-white dark:bg-gray-700 px-2 py-1 text-sm text-gray-900 dark:text-gray-100"
+                    >
+                      <option value="Arial">Arial</option>
+                      <option value="Helvetica">Helvetica</option>
+                      <option value="Times New Roman">Times New Roman</option>
+                      <option value="Courier New">Courier New</option>
+                      <option value="Impact">Impact</option>
+                      <option value="Georgia">Georgia</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">Text Color</label>
+                  <input
+                    type="color"
+                    value={textColor}
+                    onChange={(e) => {
+                      setTextColor(e.target.value)
+                      setTimeout(applyVideoFilters, 10)
+                    }}
+                    className="w-full h-10 border border-gray-300 dark:border-gray-600 rounded"
+                  />
+                </div>
+
                 <div>
                   <label className="text-xs text-gray-500 dark:text-gray-400">Position</label>
                   <select
                     value={textPosition}
-                    onChange={(e) => setTextPosition(e.target.value as any)}
+                    onChange={(e) => {
+                      setTextPosition(e.target.value as any)
+                      setTimeout(applyVideoFilters, 10)
+                    }}
                     className="w-full rounded border dark:border-gray-600 bg-white dark:bg-gray-700 px-2 py-1 text-sm mt-1 text-gray-900 dark:text-gray-100"
                   >
                     <option value="top">Top</option>
                     <option value="center">Center</option>
                     <option value="bottom">Bottom</option>
+                    <option value="custom">Custom Position</option>
+                  </select>
+                </div>
+
+                {textPosition === 'custom' && (
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">X Position (%)</label>
+                      <input
+                        type="range"
+                        min={0}
+                        max={100}
+                        value={textX}
+                        onChange={(e) => {
+                          setTextX(Number(e.target.value))
+                          setTimeout(applyVideoFilters, 10)
+                        }}
+                        className="w-full"
+                      />
+                      <div className="text-xs text-center text-gray-400 mt-1">{textX}%</div>
+                    </div>
+                    <div>
+                      <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">Y Position (%)</label>
+                      <input
+                        type="range"
+                        min={0}
+                        max={100}
+                        value={textY}
+                        onChange={(e) => {
+                          setTextY(Number(e.target.value))
+                          setTimeout(applyVideoFilters, 10)
+                        }}
+                        className="w-full"
+                      />
+                      <div className="text-xs text-center text-gray-400 mt-1">{textY}%</div>
+                    </div>
+                  </div>
+                )}
+
+                <div>
+                  <label className="text-xs text-gray-500 dark:text-gray-400">Animation</label>
+                  <select
+                    value={textAnimation}
+                    onChange={(e) => {
+                      setTextAnimation(e.target.value as any)
+                      setTimeout(applyVideoFilters, 10)
+                    }}
+                    className="w-full rounded border dark:border-gray-600 bg-white dark:bg-gray-700 px-2 py-1 text-sm mt-1 text-gray-900 dark:text-gray-100"
+                  >
+                    <option value="none">None</option>
+                    <option value="fade">Fade</option>
+                    <option value="slide">Slide</option>
+                    <option value="bounce">Bounce</option>
+                    <option value="glow">Glow</option>
                   </select>
                 </div>
               </div>
@@ -467,8 +735,186 @@ export default function CreatePage() {
               </div>
             )}
 
-            <div className="flex gap-2">
-              <button disabled={loading} onClick={() => setShowExportOptions(true)} className="flex-1 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors">
+            {activeTool === 'effects' && (
+              <div className="space-y-4">
+                <div className="text-sm text-gray-500 dark:text-gray-400 mb-3">Visual Effects</div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">Vignette</label>
+                    <input
+                      type="range"
+                      min={0}
+                      max={50}
+                      value={vignette}
+                      onChange={(e) => {
+                        setVignette(Number(e.target.value))
+                        setTimeout(applyVideoFilters, 10)
+                      }}
+                      className="w-full"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">Sharpen</label>
+                    <input
+                      type="range"
+                      min={0}
+                      max={100}
+                      value={sharpen}
+                      onChange={(e) => {
+                        setSharpen(Number(e.target.value))
+                        setTimeout(applyVideoFilters, 10)
+                      }}
+                      className="w-full"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">Noise</label>
+                    <input
+                      type="range"
+                      min={0}
+                      max={50}
+                      value={noise}
+                      onChange={(e) => {
+                        setNoise(Number(e.target.value))
+                        setTimeout(applyVideoFilters, 10)
+                      }}
+                      className="w-full"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">Pixelate</label>
+                    <input
+                      type="range"
+                      min={0}
+                      max={20}
+                      value={pixelate}
+                      onChange={(e) => {
+                        setPixelate(Number(e.target.value))
+                        setTimeout(applyVideoFilters, 10)
+                      }}
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex gap-2">
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={stabilization}
+                      onChange={(e) => {
+                        setStabilization(e.target.checked)
+                        setTimeout(applyVideoFilters, 10)
+                      }}
+                      className="mr-2"
+                    />
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Video Stabilization</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={denoise}
+                      onChange={(e) => {
+                        setDenoise(e.target.checked)
+                        setTimeout(applyVideoFilters, 10)
+                      }}
+                      className="mr-2"
+                    />
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Noise Reduction</span>
+                  </label>
+                </div>
+              </div>
+            )}
+
+            {activeTool === 'advanced' && (
+              <div className="space-y-4">
+                <div className="text-sm text-gray-500 dark:text-gray-400 mb-3">Advanced Color Correction</div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">Shadows</label>
+                    <input
+                      type="range"
+                      min={-50}
+                      max={50}
+                      value={colorCorrection.shadows}
+                      onChange={(e) => {
+                        setColorCorrection(prev => ({ ...prev, shadows: Number(e.target.value) }))
+                        setTimeout(applyVideoFilters, 10)
+                      }}
+                      className="w-full"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">Highlights</label>
+                    <input
+                      type="range"
+                      min={-50}
+                      max={50}
+                      value={colorCorrection.highlights}
+                      onChange={(e) => {
+                        setColorCorrection(prev => ({ ...prev, highlights: Number(e.target.value) }))
+                        setTimeout(applyVideoFilters, 10)
+                      }}
+                      className="w-full"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">Exposure</label>
+                    <input
+                      type="range"
+                      min={-50}
+                      max={50}
+                      value={colorCorrection.exposure}
+                      onChange={(e) => {
+                        setColorCorrection(prev => ({ ...prev, exposure: Number(e.target.value) }))
+                        setTimeout(applyVideoFilters, 10)
+                      }}
+                      className="w-full"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">Temperature</label>
+                    <input
+                      type="range"
+                      min={-50}
+                      max={50}
+                      value={colorCorrection.temperature}
+                      onChange={(e) => {
+                        setColorCorrection(prev => ({ ...prev, temperature: Number(e.target.value) }))
+                        setTimeout(applyVideoFilters, 10)
+                      }}
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">Chroma Key Color</label>
+                    <input
+                      type="color"
+                      value={chromaKey || '#00ff00'}
+                      onChange={(e) => {
+                        setChromaKey(e.target.value)
+                        setTimeout(applyVideoFilters, 10)
+                      }}
+                      className="w-full h-10 border border-gray-300 dark:border-gray-600 rounded"
+                    />
+                  </div>
+                  <button
+                    onClick={() => setChromaKey(null)}
+                    className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-sm"
+                  >
+                    Remove Green Screen
+                  </button>
+                </div>
+              </div>
+            )}
+
+            <div className="grid grid-cols-2 gap-2">
+              <button disabled={loading} onClick={() => setShowExportOptions(true)} className="px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors">
                 {loading ? 'Exporting...' : 'Export Video'}
               </button>
               <button
@@ -479,6 +925,19 @@ export default function CreatePage() {
                 <Download className="w-4 h-4" />
                 Download
               </button>
+              <button
+                onClick={() => setShowShareModal(true)}
+                disabled={!file}
+                className="px-3 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center gap-1"
+              >
+                <Share2 className="w-4 h-4" />
+                Share
+              </button>
+              <button onClick={() => {
+                setBrightness(100)
+                setContrast(100)
+                setSaturation(100)
+                setHue(0)
               <button onClick={() => {
                 setBrightness(100)
                 setContrast(100)
@@ -540,6 +999,23 @@ export default function CreatePage() {
       {showPhotoEditor && (
         <PhotoEditor onClose={() => setShowPhotoEditor(false)} />
       )}
+
+      <ShareModal
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        projectTitle="My Edited Project"
+        projectType={contentType}
+      />
+
+      <KeyboardShortcuts
+        onClose={() => setShowKeyboardShortcuts(false)}
+      />
+
+      <QuickPreview
+        videoRef={videoRef}
+        isVisible={showQuickPreview}
+        onClose={() => setShowQuickPreview(false)}
+      />
 
     </main>
   )

@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Trophy, Star, Award, Target, Zap, Crown } from 'lucide-react'
+import { useAuth } from './AuthProvider'
+import { Trophy, Star, Zap, Video, Image, Download, Target, Award } from 'lucide-react'
 
 interface Achievement {
   id: string
@@ -12,233 +13,259 @@ interface Achievement {
   progress: number
   maxProgress: number
   rarity: 'common' | 'rare' | 'epic' | 'legendary'
+  unlockedAt?: string
 }
 
-const ACHIEVEMENTS: Achievement[] = [
-  {
-    id: 'first_edit',
-    title: 'First Edit',
-    description: 'Complete your first video edit',
-    icon: '✨',
-    unlocked: true,
-    progress: 1,
-    maxProgress: 1,
-    rarity: 'common'
-  },
-  {
-    id: 'template_master',
-    title: 'Template Master',
-    description: 'Use 10 different templates',
-    icon: '🎨',
-    unlocked: true,
-    progress: 7,
-    maxProgress: 10,
-    rarity: 'rare'
-  },
-  {
-    id: 'speed_demon',
-    title: 'Speed Demon',
-    description: 'Edit 5 videos in under 30 seconds each',
-    icon: '⚡',
-    unlocked: false,
-    progress: 3,
-    maxProgress: 5,
-    rarity: 'epic'
-  },
-  {
-    id: 'cloud_savvy',
-    title: 'Cloud Savvy',
-    description: 'Save 20 projects to cloud storage',
-    icon: '☁️',
-    unlocked: true,
-    progress: 18,
-    maxProgress: 20,
-    rarity: 'rare'
-  },
-  {
-    id: 'social_star',
-    title: 'Social Star',
-    description: 'Export 50 videos for social media',
-    icon: '⭐',
-    unlocked: false,
-    progress: 24,
-    maxProgress: 50,
-    rarity: 'legendary'
-  },
-  {
-    id: 'perfectionist',
-    title: 'Perfectionist',
-    description: 'Spend 10+ minutes editing a single video',
-    icon: '🎯',
-    unlocked: true,
-    progress: 1,
-    maxProgress: 1,
-    rarity: 'epic'
-  }
-]
+export default function Achievements({ onClose }: { onClose: () => void }) {
+  const { user } = useAuth()
+  const [achievements, setAchievements] = useState<Achievement[]>([])
+  const [selectedFilter, setSelectedFilter] = useState<'all' | 'unlocked' | 'locked'>('all')
 
-export default function Achievements({ onClose }: { onClose?: () => void }) {
-  const [selectedRarity, setSelectedRarity] = useState<string>('all')
+  useEffect(() => {
+    // Load achievements from localStorage
+    const loadAchievements = () => {
+      const saved = localStorage.getItem('vieditor_achievements')
+      if (saved) {
+        setAchievements(JSON.parse(saved))
+      } else {
+        // Generate mock achievements
+        const mockAchievements: Achievement[] = [
+          {
+            id: 'first_video',
+            title: 'First Video',
+            description: 'Create your first video project',
+            icon: '🎬',
+            unlocked: true,
+            progress: 1,
+            maxProgress: 1,
+            rarity: 'common',
+            unlockedAt: '2024-01-15'
+          },
+          {
+            id: 'video_master',
+            title: 'Video Master',
+            description: 'Create 10 video projects',
+            icon: '🎥',
+            unlocked: false,
+            progress: 3,
+            maxProgress: 10,
+            rarity: 'rare'
+          },
+          {
+            id: 'filter_expert',
+            title: 'Filter Expert',
+            description: 'Apply 50 different filters',
+            icon: '🎨',
+            unlocked: false,
+            progress: 12,
+            maxProgress: 50,
+            rarity: 'epic'
+          },
+          {
+            id: 'text_artist',
+            title: 'Text Artist',
+            description: 'Add text overlays to 25 videos',
+            icon: '✍️',
+            unlocked: false,
+            progress: 8,
+            maxProgress: 25,
+            rarity: 'rare'
+          },
+          {
+            id: 'download_champion',
+            title: 'Download Champion',
+            description: 'Download 100 projects',
+            icon: '⬇️',
+            unlocked: false,
+            progress: 45,
+            maxProgress: 100,
+            rarity: 'epic'
+          },
+          {
+            id: 'template_creator',
+            title: 'Template Creator',
+            description: 'Use 20 different templates',
+            icon: '📋',
+            unlocked: true,
+            progress: 20,
+            maxProgress: 20,
+            rarity: 'common',
+            unlockedAt: '2024-02-01'
+          },
+          {
+            id: 'social_sharer',
+            title: 'Social Sharer',
+            description: 'Share 50 projects on social media',
+            icon: '📱',
+            unlocked: false,
+            progress: 15,
+            maxProgress: 50,
+            rarity: 'legendary'
+          },
+          {
+            id: 'speed_demon',
+            title: 'Speed Demon',
+            description: 'Edit a video in under 5 minutes',
+            icon: '⚡',
+            unlocked: true,
+            progress: 1,
+            maxProgress: 1,
+            rarity: 'rare',
+            unlockedAt: '2024-01-20'
+          }
+        ]
+        localStorage.setItem('vieditor_achievements', JSON.stringify(mockAchievements))
+        setAchievements(mockAchievements)
+      }
+    }
+
+    loadAchievements()
+  }, [])
 
   const getRarityColor = (rarity: string) => {
     switch (rarity) {
-      case 'common': return 'from-gray-400 to-gray-500'
-      case 'rare': return 'from-blue-400 to-blue-500'
-      case 'epic': return 'from-purple-400 to-purple-500'
-      case 'legendary': return 'from-yellow-400 to-yellow-500'
-      default: return 'from-gray-400 to-gray-500'
+      case 'common': return 'text-gray-400'
+      case 'rare': return 'text-blue-400'
+      case 'epic': return 'text-purple-400'
+      case 'legendary': return 'text-yellow-400'
+      default: return 'text-gray-400'
     }
   }
 
-  const getRarityIcon = (rarity: string) => {
-    switch (rarity) {
-      case 'legendary': return '👑'
-      case 'epic': return '💎'
-      case 'rare': return '🔷'
-      default: return '⚪'
-    }
-  }
+  const filteredAchievements = achievements.filter(achievement => {
+    if (selectedFilter === 'unlocked') return achievement.unlocked
+    if (selectedFilter === 'locked') return !achievement.unlocked
+    return true
+  })
 
-  const filteredAchievements = selectedRarity === 'all'
-    ? ACHIEVEMENTS
-    : ACHIEVEMENTS.filter(a => a.rarity === selectedRarity)
-
-  const unlockedCount = ACHIEVEMENTS.filter(a => a.unlocked).length
-  const totalCount = ACHIEVEMENTS.length
+  const unlockedCount = achievements.filter(a => a.unlocked).length
+  const totalCount = achievements.length
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white dark:bg-gray-800 rounded-lg max-w-md w-full max-h-[80vh] overflow-hidden shadow-2xl">
+      <div className="bg-gray-800 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-gray-700">
+          <div className="flex items-center gap-3">
+            <Trophy className="w-6 h-6 text-yellow-400" />
+            <div>
+              <h2 className="text-2xl font-bold text-white">Achievements</h2>
+              <p className="text-gray-400 text-sm">{unlockedCount} of {totalCount} unlocked</p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-white text-2xl"
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Filters */}
+        <div className="p-6 border-b border-gray-700">
+          <div className="flex gap-2">
+            <button
+              onClick={() => setSelectedFilter('all')}
+              className={`px-4 py-2 rounded-lg text-sm ${
+                selectedFilter === 'all'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+              }`}
+            >
+              All ({totalCount})
+            </button>
+            <button
+              onClick={() => setSelectedFilter('unlocked')}
+              className={`px-4 py-2 rounded-lg text-sm ${
+                selectedFilter === 'unlocked'
+                  ? 'bg-green-600 text-white'
+                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+              }`}
+            >
+              Unlocked ({unlockedCount})
+            </button>
+            <button
+              onClick={() => setSelectedFilter('locked')}
+              className={`px-4 py-2 rounded-lg text-sm ${
+                selectedFilter === 'locked'
+                  ? 'bg-gray-600 text-white'
+                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+              }`}
+            >
+              Locked ({totalCount - unlockedCount})
+            </button>
+          </div>
+        </div>
+
+        {/* Achievements Grid */}
         <div className="p-6">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-lg">
-                <Trophy className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Achievements</h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {unlockedCount} of {totalCount} unlocked
-                </p>
-              </div>
-            </div>
-            <button onClick={onClose} className="text-gray-400 hover:text-gray-600">✕</button>
-          </div>
-
-          {/* Progress Bar */}
-          <div className="mb-6">
-            <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-2">
-              <span>Progress</span>
-              <span>{Math.round((unlockedCount / totalCount) * 100)}%</span>
-            </div>
-            <div className="bg-gray-200 dark:bg-gray-700 rounded-full h-3">
-              <div
-                className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-500"
-                style={{ width: `${(unlockedCount / totalCount) * 100}%` }}
-              ></div>
-            </div>
-          </div>
-
-          {/* Rarity Filter */}
-          <div className="flex gap-2 mb-6 overflow-x-auto">
-            {[
-              { key: 'all', label: 'All', color: 'bg-gray-100 dark:bg-gray-700' },
-              { key: 'common', label: 'Common', color: 'bg-gray-100 dark:bg-gray-700' },
-              { key: 'rare', label: 'Rare', color: 'bg-blue-100 dark:bg-blue-900/20' },
-              { key: 'epic', label: 'Epic', color: 'bg-purple-100 dark:bg-purple-900/20' },
-              { key: 'legendary', label: 'Legendary', color: 'bg-yellow-100 dark:bg-yellow-900/20' }
-            ].map(filter => (
-              <button
-                key={filter.key}
-                onClick={() => setSelectedRarity(filter.key)}
-                className={`px-3 py-1 rounded-full text-sm whitespace-nowrap transition-colors ${
-                  selectedRarity === filter.key
-                    ? `${filter.color} text-gray-900 dark:text-gray-100 font-medium`
-                    : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
-                }`}
-              >
-                {filter.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Achievements List */}
-          <div className="space-y-3 max-h-96 overflow-y-auto">
-            {filteredAchievements.map(achievement => (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {filteredAchievements.map((achievement) => (
               <div
                 key={achievement.id}
-                className={`p-4 rounded-xl border transition-all duration-200 ${
+                className={`relative p-4 rounded-lg border transition-all ${
                   achievement.unlocked
-                    ? 'bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-green-200 dark:border-green-800'
-                    : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700'
+                    ? 'bg-gray-700 border-gray-600'
+                    : 'bg-gray-800 border-gray-700 opacity-75'
                 }`}
               >
-                <div className="flex items-start gap-3">
-                  <div className={`p-2 rounded-lg ${
-                    achievement.unlocked
-                      ? `bg-gradient-to-r ${getRarityColor(achievement.rarity)} text-white`
-                      : 'bg-gray-200 dark:bg-gray-700 text-gray-400'
-                  }`}>
-                    <span className="text-lg">{achievement.icon}</span>
+                <div className="flex items-start gap-4">
+                  <div className={`text-3xl ${achievement.unlocked ? '' : 'grayscale opacity-50'}`}>
+                    {achievement.icon}
                   </div>
-
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <h3 className={`font-semibold ${
-                        achievement.unlocked
-                          ? 'text-gray-900 dark:text-gray-100'
-                          : 'text-gray-500 dark:text-gray-400'
-                      }`}>
+                      <h3 className={`font-semibold ${achievement.unlocked ? 'text-white' : 'text-gray-400'}`}>
                         {achievement.title}
                       </h3>
-                      <span className="text-sm">{getRarityIcon(achievement.rarity)}</span>
+                      <span className={`text-xs px-2 py-1 rounded-full ${getRarityColor(achievement.rarity)} bg-gray-700`}>
+                        {achievement.rarity}
+                      </span>
                     </div>
-
-                    <p className={`text-sm mb-2 ${
-                      achievement.unlocked
-                        ? 'text-gray-600 dark:text-gray-300'
-                        : 'text-gray-400 dark:text-gray-500'
-                    }`}>
+                    <p className={`text-sm mb-3 ${achievement.unlocked ? 'text-gray-300' : 'text-gray-500'}`}>
                       {achievement.description}
                     </p>
 
                     {/* Progress Bar */}
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-xs text-gray-400">
+                        <span>Progress</span>
+                        <span>{achievement.progress} / {achievement.maxProgress}</span>
+                      </div>
+                      <div className="w-full bg-gray-600 rounded-full h-2">
                         <div
-                          className={`h-2 rounded-full transition-all duration-500 ${
-                            achievement.unlocked
-                              ? 'bg-gradient-to-r from-green-400 to-green-500'
-                              : 'bg-gray-300 dark:bg-gray-600'
+                          className={`h-2 rounded-full transition-all ${
+                            achievement.unlocked ? 'bg-green-500' : 'bg-blue-500'
                           }`}
-                          style={{ width: `${(achievement.progress / achievement.maxProgress) * 100}%` }}
+                          style={{width: `${Math.min((achievement.progress / achievement.maxProgress) * 100, 100)}%`}}
                         ></div>
                       </div>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">
-                        {achievement.progress}/{achievement.maxProgress}
-                      </span>
                     </div>
+
+                    {achievement.unlocked && achievement.unlockedAt && (
+                      <div className="mt-2 text-xs text-gray-500">
+                        Unlocked on {new Date(achievement.unlockedAt).toLocaleDateString()}
+                      </div>
+                    )}
                   </div>
                 </div>
+
+                {/* Achievement Badge */}
+                {achievement.unlocked && (
+                  <div className="absolute top-2 right-2">
+                    <Award className="w-5 h-5 text-yellow-400" />
+                  </div>
+                )}
               </div>
             ))}
           </div>
 
-          {/* Stats */}
-          <div className="mt-6 grid grid-cols-3 gap-4 text-center">
-            <div className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-3 rounded-lg">
-              <div className="text-lg font-bold text-blue-600">{unlockedCount}</div>
-              <div className="text-xs text-blue-700 dark:text-blue-300">Unlocked</div>
+          {filteredAchievements.length === 0 && (
+            <div className="text-center py-12 text-gray-400">
+              <Trophy className="w-16 h-16 mx-auto mb-4 opacity-50" />
+              <p>No achievements found for the selected filter.</p>
             </div>
-            <div className="bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 p-3 rounded-lg">
-              <div className="text-lg font-bold text-purple-600">{totalCount - unlockedCount}</div>
-              <div className="text-xs text-purple-700 dark:text-purple-300">Remaining</div>
-            </div>
-            <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 p-3 rounded-lg">
-              <div className="text-lg font-bold text-yellow-600">4</div>
-              <div className="text-xs text-yellow-700 dark:text-yellow-300">Rarities</div>
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
