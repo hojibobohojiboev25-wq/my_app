@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import { Upload, RotateCw, ZoomIn, ZoomOut, Crop, Type, Palette, Download, X } from 'lucide-react'
 
 interface PhotoFilter {
