@@ -1,10 +1,5 @@
 "use client"
 
-export const metadata = {
-  title: 'Templates - Vieditor',
-  description: 'Choose from professional video templates',
-}
-
 import { useState } from 'react'
 import Link from 'next/link'
 import { Smartphone, Monitor, Square, Instagram, Youtube, Facebook, Palette, Star } from 'lucide-react'

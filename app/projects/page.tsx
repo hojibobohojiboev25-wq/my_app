@@ -1,10 +1,5 @@
 "use client"
 
-export const metadata = {
-  title: 'Projects - Vieditor',
-  description: 'View and manage your media projects',
-}
-
 import { useEffect, useState } from 'react'
 import ProjectCard from '../../components/ProjectCard'
 import { HardDrive, Cloud, Plus } from 'lucide-react'

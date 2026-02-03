@@ -1,10 +1,5 @@
 "use client"
 
-export const metadata = {
-  title: 'Profile - Vieditor',
-  description: 'Manage your account and view analytics',
-}
-
 import { useState } from 'react'
 import { useAuth } from '../../components/AuthProvider'
 import Analytics from '../../components/Analytics'
