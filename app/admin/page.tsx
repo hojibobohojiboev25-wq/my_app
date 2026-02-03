@@ -1,5 +1,10 @@
 "use client"
 
+export const metadata = {
+  title: 'Admin Dashboard - Vieditor',
+  description: 'Manage users and system settings',
+}
+
 import { useState, useEffect } from 'react'
 import ProtectedAdmin from '../../components/ProtectedAdmin'
 import { useAuth } from '../../components/AuthProvider'

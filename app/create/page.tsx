@@ -1,5 +1,10 @@
 "use client"
 
+export const metadata = {
+  title: 'Create Project - Vieditor',
+  description: 'Create and edit your media projects with professional tools',
+}
+
 import { useState, useRef } from 'react'
 import SaveProject from '../../components/SaveProject'
 import AudioEditor from '../../components/AudioEditor'
