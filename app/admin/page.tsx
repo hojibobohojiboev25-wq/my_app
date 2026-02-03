@@ -21,6 +21,17 @@ export default function AdminPage(){
   const [users, setUsers] = useState<User[]>([])
   const [showPasswordModal, setShowPasswordModal] = useState(false)
   const [showAddUserModal, setShowAddUserModal] = useState(false)
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  })
+  const [newUserData, setNewUserData] = useState({
+    email: '',
+    name: '',
+    role: 'user' as 'user' | 'admin',
+    password: ''
+  })
 
   // Admin authentication
   const ADMIN_CREDENTIALS = {
@@ -49,17 +60,6 @@ export default function AdminPage(){
       }
     }
   }, [])
-  const [passwordData, setPasswordData] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: ''
-  })
-  const [newUserData, setNewUserData] = useState({
-    email: '',
-    name: '',
-    role: 'user' as 'user' | 'admin',
-    password: ''
-  })
 
   // Load users from localStorage (simulating database)
   useEffect(() => {
@@ -75,7 +75,7 @@ export default function AdminPage(){
           name: 'Admin User',
           role: 'admin',
           createdAt: '2024-01-01',
-          lastLogin: new Date().toISOString(),
+          lastLogin: 'Never',
           isActive: true
         }
       ]
@@ -135,10 +135,6 @@ export default function AdminPage(){
   }
 
   const handleDeleteUser = (userId: string) => {
-    if (userId === user?.email) {
-      alert('Cannot delete your own account')
-      return
-    }
     if (confirm('Are you sure you want to delete this user?')) {
       const updatedUsers = users.filter(u => u.id !== userId)
       saveUsers(updatedUsers)
@@ -163,8 +159,8 @@ export default function AdminPage(){
   if (showLogin) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
-        <div className="bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full p-8 border border-gray-700">
-          <div className="text-center mb-8">
+        <div className="bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full p-8 text-center">
+          <div className="mb-8">
             <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <span className="text-2xl">🔐</span>
             </div>
@@ -202,7 +198,7 @@ export default function AdminPage(){
 
             <button
               onClick={handleAdminLogin}
-              className="w-full py-3 px-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105"
+              className="w-full py-3 px-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:from-blue-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105"
             >
               Access Admin Panel
             </button>
@@ -219,11 +215,12 @@ export default function AdminPage(){
   }
 
   return (
+    <div>
       <main className="px-4 pt-6 pb-24">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t('adminDashboard')}</h1>
           <div className="text-sm text-gray-500 dark:text-gray-400">
-            Welcome, {user?.email}
+            Welcome, Admin
           </div>
         </div>
 
@@ -251,54 +248,54 @@ export default function AdminPage(){
         <div className="grid grid-cols-2 gap-4 mb-6">
           <button
             onClick={() => setShowPasswordModal(true)}
-            className="p-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 hover:shadow-md transition-shadow"
+            className="p-4 bg-gray-800 hover:bg-gray-700 rounded-xl shadow-sm border border-gray-700 hover:border-gray-600 transition-colors"
           >
             <div className="text-2xl mb-2">🔐</div>
-            <div className="font-semibold text-gray-900 dark:text-gray-100">{t('changePassword')}</div>
+            <div className="font-semibold text-white">{t('changePassword')}</div>
           </button>
           <button
             onClick={() => setShowAddUserModal(true)}
-            className="p-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 hover:shadow-md transition-shadow"
+            className="p-4 bg-gray-800 hover:bg-gray-700 rounded-xl shadow-sm border border-gray-700 hover:border-gray-600 transition-colors"
           >
             <div className="text-2xl mb-2">👤</div>
-            <div className="font-semibold text-gray-900 dark:text-gray-100">{t('addUser')}</div>
+            <div className="font-semibold text-white">{t('addUser')}</div>
           </button>
         </div>
 
         {/* Users Management */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700">
-          <div className="p-4 border-b dark:border-gray-700">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{t('userManagement')}</h2>
+        <div className="bg-gray-800 rounded-xl shadow-sm border border-gray-700">
+          <div className="p-4 border-b border-gray-700">
+            <h2 className="text-lg font-semibold text-white">{t('userManagement')}</h2>
           </div>
           <div className="p-4">
             <div className="space-y-3">
               {users.map((u) => (
-                <div key={u.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <div key={u.id} className="flex items-center justify-between p-3 bg-gray-700 rounded-lg">
                   <div className="flex-1">
-                    <div className="font-medium text-gray-900 dark:text-gray-100">{u.name}</div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">{u.email}</div>
-                    <div className="text-xs text-gray-500 dark:text-gray-500">
+                    <div className="font-medium text-white">{u.name}</div>
+                    <div className="text-sm text-gray-400">{u.email}</div>
+                    <div className="text-xs text-gray-500">
                       Role: {u.role} • Created: {new Date(u.createdAt).toLocaleDateString()}
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className={`px-2 py-1 rounded-full text-xs ${
                       u.isActive
-                        ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300'
-                        : 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300'
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-red-100 text-red-800'
                     }`}>
                       {u.isActive ? 'Active' : 'Inactive'}
                     </span>
                     <button
                       onClick={() => toggleUserStatus(u.id)}
-                      className="p-1 text-gray-400 hover:text-gray-600"
+                      className="p-1 text-gray-400 hover:text-gray-200"
                     >
                       {u.isActive ? '🚫' : '✅'}
                     </button>
                     {u.id !== '1' && (
                       <button
                         onClick={() => handleDeleteUser(u.id)}
-                        className="p-1 text-red-400 hover:text-red-600"
+                        className="p-1 text-red-400 hover:text-red-300"
                       >
                         🗑️
                       </button>
@@ -313,47 +310,47 @@ export default function AdminPage(){
         {/* Password Change Modal */}
         {showPasswordModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white dark:bg-gray-800 rounded-xl max-w-md w-full p-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">{t('changePassword')}</h3>
+            <div className="bg-gray-800 rounded-xl max-w-md w-full p-6">
+              <h3 className="text-lg font-semibold text-white mb-4">{t('changePassword')}</h3>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
                     {t('currentPassword')}
                   </label>
                   <input
                     type="password"
                     value={passwordData.currentPassword}
                     onChange={(e) => setPasswordData(prev => ({ ...prev, currentPassword: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="w-full px-3 py-2 border border-gray-600 rounded-lg bg-gray-700 text-white"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
                     {t('newPassword')}
                   </label>
                   <input
                     type="password"
                     value={passwordData.newPassword}
                     onChange={(e) => setPasswordData(prev => ({ ...prev, newPassword: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="w-full px-3 py-2 border border-gray-600 rounded-lg bg-gray-700 text-white"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
                     {t('confirmPassword')}
                   </label>
                   <input
                     type="password"
                     value={passwordData.confirmPassword}
                     onChange={(e) => setPasswordData(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="w-full px-3 py-2 border border-gray-600 rounded-lg bg-gray-700 text-white"
                   />
                 </div>
               </div>
               <div className="flex gap-3 mt-6">
                 <button
                   onClick={() => setShowPasswordModal(false)}
-                  className="flex-1 py-2 px-4 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300 rounded-lg"
+                  className="flex-1 py-2 px-4 bg-gray-700 text-gray-300 rounded-lg"
                 >
                   Cancel
                 </button>
@@ -371,47 +368,47 @@ export default function AdminPage(){
         {/* Add User Modal */}
         {showAddUserModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white dark:bg-gray-800 rounded-xl max-w-md w-full p-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">{t('addUser')}</h3>
+            <div className="bg-gray-800 rounded-xl max-w-md w-full p-6">
+              <h3 className="text-lg font-semibold text-white mb-4">{t('addUser')}</h3>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
                     Full Name
                   </label>
                   <input
                     type="text"
                     value={newUserData.name}
                     onChange={(e) => setNewUserData(prev => ({ ...prev, name: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="w-full px-3 py-2 border border-gray-600 rounded-lg bg-gray-700 text-white"
                     placeholder="Enter full name"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
                     {t('email')}
                   </label>
                   <input
                     type="email"
                     value={newUserData.email}
                     onChange={(e) => setNewUserData(prev => ({ ...prev, email: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="w-full px-3 py-2 border border-gray-600 rounded-lg bg-gray-700 text-white"
                     placeholder="Enter email"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
                     Password
                   </label>
                   <input
                     type="password"
                     value={newUserData.password}
                     onChange={(e) => setNewUserData(prev => ({ ...prev, password: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="w-full px-3 py-2 border border-gray-600 rounded-lg bg-gray-700 text-white"
                     placeholder="Enter password"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     Role
                   </label>
                   <div className="flex gap-3">
@@ -443,7 +440,7 @@ export default function AdminPage(){
               <div className="flex gap-3 mt-6">
                 <button
                   onClick={() => setShowAddUserModal(false)}
-                  className="flex-1 py-2 px-4 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300 rounded-lg"
+                  className="flex-1 py-2 px-4 bg-gray-700 text-gray-300 rounded-lg"
                 >
                   Cancel
                 </button>
@@ -458,6 +455,6 @@ export default function AdminPage(){
           </div>
         )}
       </main>
-    </ProtectedAdmin>
+    </div>
   )
 }
